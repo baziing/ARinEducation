@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ARinEducation</string>
+<!--    ocr-->
+    <string name="ocr_camera">拍照</string>
+    <string name="ocr_album">从相册中选取</string>
+    <string name="ocr_crop">裁剪</string>
+    <string name="ocr_restart">重新选取</string>
 </resources>
