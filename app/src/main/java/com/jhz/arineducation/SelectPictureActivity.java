@@ -30,6 +30,11 @@ import com.googlecode.tesseract.android.TessBaseAPI;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.osgi.OpenCVNativeLoader;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -188,6 +193,16 @@ public class SelectPictureActivity extends AppCompatActivity {
                     try {
                         //获取图片
                         bitmap = BitmapFactory.decodeStream(cr.openInputStream(resultUri));
+
+//                        灰度化
+                        OpenCVNativeLoader openCVNativeLoader=new OpenCVNativeLoader();
+                        openCVNativeLoader.init();
+                        Mat mat=new Mat();
+                        Mat grayMat=new Mat();
+                        Utils.bitmapToMat(bitmap,mat);
+                        Imgproc.cvtColor(mat,grayMat,Imgproc.COLOR_BGR2GRAY);
+                        Utils.matToBitmap(grayMat,bitmap);
+
                         imageView.setImageBitmap(bitmap);
                     } catch (FileNotFoundException e) {
                         Log.e("Exception", e.getMessage(),e);

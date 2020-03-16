@@ -10,6 +10,16 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        externalNativeBuild {
+            cmake {
+//                cppFlags "-std=c++11"
+                cppFlags ""
+                arguments "-DANDROID_STL=c++_shared"
+//                abiFilters 'x86'
+            }
+        }
+
     }
     buildTypes {
         release {
@@ -17,6 +27,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.10.2"
+        }
+    }
+
 }
 
 dependencies {
@@ -29,4 +47,5 @@ dependencies {
 
     implementation 'com.rmtheis:tess-two:9.1.0'
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
+    implementation project(path: ':OpenCV')
 }
