@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -38,6 +39,8 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.osgi.OpenCVNativeLoader;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -119,6 +122,28 @@ public class SelectPictureActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private Boolean checkPicByte(Bitmap bitmap){
+        if (bitmap.getAllocationByteCount()>128*100)
+            return false;
+        return true;
+    }
+
+    private Bitmap compressPic(Bitmap bitmap){
+        ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
+        int options=100;
+        while (byteArrayOutputStream.toByteArray().length/1024>256){
+            Toast.makeText(getApplicationContext(),String.valueOf(byteArrayOutputStream.toByteArray().length/1024), Toast.LENGTH_LONG).show();
+            System.out.println(String.valueOf(byteArrayOutputStream.toByteArray().length/1024));
+            byteArrayOutputStream.reset();
+            bitmap.compress(Bitmap.CompressFormat.JPEG,options,byteArrayOutputStream);
+            options=options-10;
+        }
+        ByteArrayInputStream byteArrayInputStream=new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        bitmap=BitmapFactory.decodeStream(byteArrayInputStream,null,null);
+        return bitmap;
     }
 
     private void takePic(){
@@ -214,6 +239,7 @@ public class SelectPictureActivity extends AppCompatActivity {
                     try {
                         //获取图片
                         bitmap = BitmapFactory.decodeStream(cr.openInputStream(resultUri));
+                        compressPic(bitmap);
                         bitmap=cvPic(bitmap);
                         imageView.setImageBitmap(bitmap);
                     } catch (FileNotFoundException e) {
