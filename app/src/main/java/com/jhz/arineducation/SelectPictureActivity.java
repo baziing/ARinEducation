@@ -32,6 +32,9 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.osgi.OpenCVNativeLoader;
 
@@ -163,6 +166,24 @@ public class SelectPictureActivity extends AppCompatActivity {
         textView.setText(OCRresult);
     }
 
+    //处理图片
+    private Bitmap cvPic(Bitmap bitmap){
+        OpenCVNativeLoader openCVNativeLoader=new OpenCVNativeLoader();
+        openCVNativeLoader.init();
+        Mat mat=new Mat();
+        Mat resultMat=new Mat();
+        Utils.bitmapToMat(bitmap,mat);
+        Imgproc.cvtColor(mat,resultMat,Imgproc.COLOR_BGR2GRAY);//灰度化
+        Imgproc.threshold(resultMat,resultMat,100,255,Imgproc.THRESH_BINARY);//二值化
+        Mat erodeElement=Imgproc.getStructuringElement(Imgproc.MORPH_RECT,new Size(26,26));//腐蚀，填充
+        Imgproc.erode(resultMat,resultMat,erodeElement);
+        List<MatOfPoint>contours=new ArrayList<>();//轮廓检测
+        Imgproc.findContours(resultMat,contours,new Mat(),Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.drawContours(resultMat,contours,-1, new Scalar(0,255,0),4);
+        Utils.matToBitmap(resultMat,bitmap);
+        return bitmap;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
@@ -193,16 +214,7 @@ public class SelectPictureActivity extends AppCompatActivity {
                     try {
                         //获取图片
                         bitmap = BitmapFactory.decodeStream(cr.openInputStream(resultUri));
-
-//                        灰度化
-                        OpenCVNativeLoader openCVNativeLoader=new OpenCVNativeLoader();
-                        openCVNativeLoader.init();
-                        Mat mat=new Mat();
-                        Mat grayMat=new Mat();
-                        Utils.bitmapToMat(bitmap,mat);
-                        Imgproc.cvtColor(mat,grayMat,Imgproc.COLOR_BGR2GRAY);
-                        Utils.matToBitmap(grayMat,bitmap);
-
+                        bitmap=cvPic(bitmap);
                         imageView.setImageBitmap(bitmap);
                     } catch (FileNotFoundException e) {
                         Log.e("Exception", e.getMessage(),e);
