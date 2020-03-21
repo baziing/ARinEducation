@@ -10,6 +10,7 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -72,28 +73,70 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                copy();
 
 //                Intent intent=new Intent();
 //                intent.setClass(MainActivity.this,SelectPictureActivity.class);
 //                startActivity(intent);
-                OkHttpClient client = new OkHttpClient();
-                Request request = new Request.Builder()
-                        .url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1584802701000&di=c24e57b0b9b721c0def1894a6f8ed6c8&imgtype=0&src=http%3A%2F%2Fbbs.jooyoo.net%2Fattachment%2FMon_0905%2F24_65548_2835f8eaa933ff6.jpg")
-                        .build();
-                Call call = client.newCall(request);
-                call.enqueue(new Callback() {
-                    @Override
-                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                        Log.i("myTag", "下载失败");
-                    }
 
-                    @Override
-                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                        writeFile(response);
-                    }
-                });
+//                OkHttpClient client = new OkHttpClient();
+//                Request request = new Request.Builder()
+//                        .url("http://cdn.duitang.com/uploads/blog/201408/03/20140803160604_ZFu2T.jpeg")
+//                        .build();
+//                Call call = client.newCall(request);
+//                call.enqueue(new Callback() {
+//                    @Override
+//                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+//                        Log.i("myTag", "下载失败");
+//                    }
+//
+//                    @Override
+//                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+//                        writeFile(response);
+//                    }
+//                });
+
             }
         });
+    }
+
+    private void copy(){
+        System.out.println("==============从a");
+
+        try {
+            System.out.println("==============从asset复制文件到内存==============copyAssets============================.");
+            String newPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/ARinEducation/";
+            File files = new File(newPath);
+            String fileName="eng.traineddata";
+            File file = new File(newPath, fileName);
+
+            InputStream is = null;
+
+            try {
+                AssetManager manager = getAssets();
+                if (manager == null) return;
+                is = manager.open("eng.traineddata");
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            if (is == null) return;
+            FileOutputStream fos = new FileOutputStream(file);
+            byte[] buffer = new byte[1024];
+            int byteCount = 0;
+            while ((byteCount = is.read(buffer)) != -1) {// 循环从输入流读取
+                // buffer字节
+                fos.write(buffer, 0, byteCount);// 将读取的输入流写入到输出流
+            }
+            fos.flush();// 刷新缓冲区
+            is.close();
+            fos.close();
+            System.out.println("==============从asset复制文件到内存==============copyAssets  success============================.");
+        }catch (Exception e){
+            System.out.println("==============从asset复制文件到内存==============copyAssets  error============================.");
+            e.printStackTrace();
+        }
+
     }
 
     private void writeFile(Response response) {
