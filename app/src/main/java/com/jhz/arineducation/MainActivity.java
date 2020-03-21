@@ -11,10 +11,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     List<String> permissionList = new ArrayList<>();
 
     private Button button;
+    private String mDataPath= Environment.getExternalStorageDirectory().getAbsolutePath()+"/tesseract/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
             showDialog();
         }
 
+        //判断是否有文件夹
+        checkDir();
+
+        //下载资源
+        downloadTrainedData();
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,6 +59,20 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void checkDir(){
+        String path=Environment.getExternalStorageDirectory().getAbsolutePath()+"/ARinEducation";
+        File file=new File(path);
+        if (!file.exists()){
+            file.mkdir();
+            System.out.println("创建成功");
+        }else
+            System.out.println("已经存在");
+    }
+
+    private void downloadTrainedData(){
+
     }
 
     private Boolean checkPermissions(){

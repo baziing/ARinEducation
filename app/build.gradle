@@ -49,4 +49,5 @@ dependencies {
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
     implementation 'top.zibin:Luban:1.1.8'
     implementation project(path: ':OpenCV')
+    implementation("com.squareup.okhttp3:okhttp:4.4.0")
 }
