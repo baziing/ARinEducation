@@ -10,15 +10,33 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     //    权限
     String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.INTERNET};
     List<String> permissionList = new ArrayList<>();
 
     private Button button;
@@ -48,17 +66,76 @@ public class MainActivity extends AppCompatActivity {
         checkDir();
 
         //下载资源
-        downloadTrainedData();
+
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent=new Intent();
-                intent.setClass(MainActivity.this,SelectPictureActivity.class);
-                startActivity(intent);
+
+//                Intent intent=new Intent();
+//                intent.setClass(MainActivity.this,SelectPictureActivity.class);
+//                startActivity(intent);
+                OkHttpClient client = new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1584802701000&di=c24e57b0b9b721c0def1894a6f8ed6c8&imgtype=0&src=http%3A%2F%2Fbbs.jooyoo.net%2Fattachment%2FMon_0905%2F24_65548_2835f8eaa933ff6.jpg")
+                        .build();
+                Call call = client.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                        Log.i("myTag", "下载失败");
+                    }
+
+                    @Override
+                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                        writeFile(response);
+                    }
+                });
             }
         });
+    }
+
+    private void writeFile(Response response) {
+        InputStream is = null;
+        FileOutputStream fos = null;
+        is = response.body().byteStream();
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/ARinEducation/";
+        long fileSize1 = response.body().contentLength();
+        System.out.println("大小");
+        System.out.println(fileSize1/1024);
+        String fileName="1.jpg";
+        File file = new File(path, fileName);
+        long total = response.body().contentLength();
+        int len = 0;
+        byte[] buf = new byte[2048];
+        try {
+            fos = new FileOutputStream(file);
+            fos = new FileOutputStream(file);
+            long sum = 0;
+            while ((len = is.read(buf)) != -1) {
+                fos.write(buf, 0, len);
+                sum += len;
+                int progress = (int) (sum * 1.0f / total * 100);
+//                LogUtil.e(TAG,"download progress : " + progress);
+//                mView.onDownloading("",progress);
+            }
+            fos.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+                if (fos != null) {
+                    fos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Log.i("myTag", "下载成功");
     }
 
     private void checkDir(){
@@ -71,8 +148,16 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("已经存在");
     }
 
-    private void downloadTrainedData(){
+    private File getFile(){
+        String root = Environment.getExternalStorageDirectory().getPath();
+        File file = new File(root,"updateDemo.apk");
+        return file;
+    }
 
+    private long getFileStart(){
+        String root = Environment.getExternalStorageDirectory().getPath();
+        File file = new File(root,"updateDemo.apk");
+        return file.length();
     }
 
     private Boolean checkPermissions(){
@@ -142,4 +227,6 @@ public class MainActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .show();
     }
+
+
 }
