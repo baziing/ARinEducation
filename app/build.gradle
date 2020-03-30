@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.ar.sceneform.plugin'
 
 android {
     compileSdkVersion 29
@@ -34,6 +35,10 @@ android {
             version "3.10.2"
         }
     }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 
 }
 
@@ -50,4 +55,13 @@ dependencies {
     implementation 'top.zibin:Luban:1.1.8'
     implementation project(path: ':OpenCV')
     implementation("com.squareup.okhttp3:okhttp:4.4.0")
+
+    implementation 'com.google.ar:core:1.16.0'
+    implementation "com.google.ar.sceneform.ux:sceneform-ux:1.15.0"
 }
+
+
+sceneform.asset('sampledata/models/mosaic ball.obj',
+        'default',
+        'sampledata/models/mosaic ball.sfa',
+        'src/main/assets/mosaic ball')

@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     //    权限
     String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.INTERNET};
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.INTERNET,Manifest.permission.CAMERA};
     List<String> permissionList = new ArrayList<>();
 
     private Button button;
@@ -73,11 +73,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                copy();
+//                copy();
 
-//                Intent intent=new Intent();
-//                intent.setClass(MainActivity.this,SelectPictureActivity.class);
-//                startActivity(intent);
+                Intent intent=new Intent();
+                intent.setClass(MainActivity.this,ARActivity.class);
+                startActivity(intent);
 
 //                OkHttpClient client = new OkHttpClient();
 //                Request request = new Request.Builder()
