@@ -21,6 +21,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.ar.core.ArCoreApk;
+import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
+import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedInputStream;
@@ -42,6 +46,8 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     private final int requestCode = 100;
+    private boolean mUserRequestedInstall = true;
+
 
     //    权限
     String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -58,16 +64,17 @@ public class MainActivity extends AppCompatActivity {
 
         button=(Button)findViewById(R.id.go);
 
+
         //判断是否有权限
         if (!checkPermissions()){
             showDialog();
         }
 
+        //下载资源
+        copy();
+
         //判断是否有文件夹
         checkDir();
-
-        //下载资源
-
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,11 +108,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void copy(){
+        Toast.makeText(this, "1dsafa", Toast.LENGTH_LONG).show();
+
         System.out.println("==============从a");
 
         try {
             System.out.println("==============从asset复制文件到内存==============copyAssets============================.");
-            String newPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/ARinEducation/";
+            String newPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DCIM/";
             File files = new File(newPath);
             String fileName="eng.traineddata";
             File file = new File(newPath, fileName);
@@ -187,8 +196,11 @@ public class MainActivity extends AppCompatActivity {
         if (!file.exists()){
             file.mkdir();
             System.out.println("创建成功");
-        }else
+            Toast.makeText(this, "1"+path, Toast.LENGTH_LONG).show();
+        }else {
             System.out.println("已经存在");
+            Toast.makeText(this, "0"+path, Toast.LENGTH_LONG).show();
+        }
     }
 
     private File getFile(){
@@ -271,5 +283,33 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        //check permission
+
+        // check ARCore
+//        try {
+//            switch (ArCoreApk.getInstance().requestInstall(this, mUserRequestedInstall)) {
+//                case INSTALLED:
+//                    // Success, create the AR session.
+//                    break;
+//                case INSTALL_REQUESTED:
+//                    // Ensures next invocation of requestInstall() will either return
+//                    // INSTALLED or throw an exception.
+//                    mUserRequestedInstall = false;
+//                    return;
+//            }
+//        } catch (UnavailableUserDeclinedInstallationException e) {
+//            // Display an appropriate message to the user and return gracefully.
+//            Toast.makeText(this, "TODO: handle exception " + e, Toast.LENGTH_LONG)
+//                    .show();
+//            return;
+//        } catch (UnavailableDeviceNotCompatibleException e){
+//            Toast.makeText(this, "TODO: handle exception " + e, Toast.LENGTH_LONG)
+//                    .show();
+//            return;
+//        }
+    }
 }
