@@ -1,0 +1,69 @@
+{
+  animations: [
+    {
+      path: 'sampledata/models/treedead/tree-dead.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: 'tree-dead_LOW-POLY-COLORS',
+      parameters: [
+        {
+          baseColor: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          baseColorMap: 'tree-dead_LOW-POLY-COLORS_MainTex',
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'sampledata/models/treedead/tree-dead.fbx',
+    name: 'tree-dead',
+    recenter: 'root',
+    scale: 0.53517499999999996,
+  },
+  samplers: [
+    {
+      file: 'sampledata/models/treedead/tree-dead_LOW-POLY-COLORS_MainTex.png',
+      name: 'tree-dead_LOW-POLY-COLORS_MainTex',
+      pipeline_name: '/Textures/tree-dead_LOW-POLY-COLORS_MainTex.png',
+    },
+  ],
+  version: '0.54:2',
+}

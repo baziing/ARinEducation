@@ -1,0 +1,68 @@
+{
+  animations: [
+    {
+      path: 'sampledata/models/bamboo/bamboo-leaves.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: 'bamboo-leaves_LOW-POLY-COLORS',
+      parameters: [
+        {
+          baseColor: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          baseColorMap: 'bamboo-leaves_LOW-POLY-COLORS_MainTex',
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'sampledata/models/bamboo/bamboo-leaves.fbx',
+    name: 'bamboo-leaves',
+    recenter: 'root',
+  },
+  samplers: [
+    {
+      file: 'sampledata/models/bamboo/bamboo-leaves_LOW-POLY-COLORS_MainTex.png',
+      name: 'bamboo-leaves_LOW-POLY-COLORS_MainTex',
+      pipeline_name: '/Textures/bamboo-leaves_LOW-POLY-COLORS_MainTex.png',
+    },
+  ],
+  version: '0.54:2',
+}

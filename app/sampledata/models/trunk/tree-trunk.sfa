@@ -1,0 +1,68 @@
+{
+  animations: [
+    {
+      path: 'sampledata/models/trunk/tree-trunk.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: 'tree-trunk_LOW-POLY-COLORS',
+      parameters: [
+        {
+          baseColor: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          baseColorMap: 'tree-trunk_LOW-POLY-COLORS_MainTex',
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'sampledata/models/trunk/tree-trunk.fbx',
+    name: 'tree-trunk',
+    recenter: 'root',
+  },
+  samplers: [
+    {
+      file: 'sampledata/models/trunk/tree-trunk_LOW-POLY-COLORS_MainTex.png',
+      name: 'tree-trunk_LOW-POLY-COLORS_MainTex',
+      pipeline_name: '/Textures/tree-trunk_LOW-POLY-COLORS_MainTex.png',
+    },
+  ],
+  version: '0.54:2',
+}

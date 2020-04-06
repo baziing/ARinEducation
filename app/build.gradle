@@ -58,6 +58,7 @@ dependencies {
 
     implementation 'com.google.ar:core:1.16.0'
     implementation "com.google.ar.sceneform.ux:sceneform-ux:1.15.0"
+    implementation "com.google.ar.sceneform:core:1.15.0"
 }
 
 
@@ -65,3 +66,55 @@ sceneform.asset('sampledata/models/mosaic ball.obj',
         'default',
         'sampledata/models/mosaic ball.sfa',
         'src/main/assets/mosaic ball')
+
+
+sceneform.asset('sampledata/models/pig/pig.obj',
+        'default',
+        'sampledata/models/pig/pig.sfa',
+        'src/main/assets/pig')
+
+
+sceneform.asset('sampledata/models/bamboo/bamboo-leaves.fbx',
+        'default',
+        'sampledata/models/bamboo/bamboo-leaves.sfa',
+        'src/main/assets/bamboo-leaves')
+
+sceneform.asset('sampledata/models/cloud/cloud-big.fbx',
+        'default',
+        'sampledata/models/cloud/cloud-big.sfa',
+        'src/main/assets/cloud-big')
+
+sceneform.asset('sampledata/models/coral/coral-small_orange.fbx',
+        'default',
+        'sampledata/models/coral/coral-small_orange.sfa',
+        'src/main/assets/coral-small_orange')
+
+sceneform.asset('sampledata/models/leaf/leaf-maple-simple.fbx',
+        'default',
+        'sampledata/models/leaf/leaf-maple-simple.sfa',
+        'src/main/assets/leaf-maple-simple')
+
+sceneform.asset('sampledata/models/mushroom/mushroom-toadstool.fbx',
+        'default',
+        'sampledata/models/mushroom/mushroom-toadstool.sfa',
+        'src/main/assets/mushroom-toadstool')
+
+sceneform.asset('sampledata/models/stone/stone-flat.fbx',
+        'default',
+        'sampledata/models/stone/stone-flat.sfa',
+        'src/main/assets/stone-flat')
+
+sceneform.asset('sampledata/models/tree/tree-baobab.fbx',
+        'default',
+        'sampledata/models/tree/tree-baobab.sfa',
+        'src/main/assets/tree-baobab')
+
+sceneform.asset('sampledata/models/treedead/tree-dead.fbx',
+        'default',
+        'sampledata/models/treedead/tree-dead.sfa',
+        'src/main/assets/tree-dead')
+
+sceneform.asset('sampledata/models/trunk/tree-trunk.fbx',
+        'default',
+        'sampledata/models/trunk/tree-trunk.sfa',
+        'src/main/assets/tree-trunk')

@@ -1,0 +1,68 @@
+{
+  animations: [
+    {
+      path: 'sampledata/models/leaf/leaf-maple-simple.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: 'leaf-maple-simple_LOW-POLY-COLORS',
+      parameters: [
+        {
+          baseColor: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          baseColorMap: 'leaf-maple-simple_LOW-POLY-COLORS_MainTex',
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'sampledata/models/leaf/leaf-maple-simple.fbx',
+    name: 'leaf-maple-simple',
+    recenter: 'root',
+  },
+  samplers: [
+    {
+      file: 'sampledata/models/leaf/leaf-maple-simple_LOW-POLY-COLORS_MainTex.png',
+      name: 'leaf-maple-simple_LOW-POLY-COLORS_MainTex',
+      pipeline_name: '/Textures/leaf-maple-simple_LOW-POLY-COLORS_MainTex.png',
+    },
+  ],
+  version: '0.54:2',
+}

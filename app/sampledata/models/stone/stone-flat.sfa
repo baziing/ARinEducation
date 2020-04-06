@@ -1,0 +1,68 @@
+{
+  animations: [
+    {
+      path: 'sampledata/models/stone/stone-flat.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: 'stone-flat_LOW-POLY-COLORS',
+      parameters: [
+        {
+          baseColor: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          baseColorMap: 'stone-flat_LOW-POLY-COLORS_MainTex',
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'sampledata/models/stone/stone-flat.fbx',
+    name: 'stone-flat',
+    recenter: 'root',
+  },
+  samplers: [
+    {
+      file: 'sampledata/models/stone/stone-flat_LOW-POLY-COLORS_MainTex.png',
+      name: 'stone-flat_LOW-POLY-COLORS_MainTex',
+      pipeline_name: '/Textures/stone-flat_LOW-POLY-COLORS_MainTex.png',
+    },
+  ],
+  version: '0.54:2',
+}

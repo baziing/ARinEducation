@@ -1,0 +1,68 @@
+{
+  animations: [
+    {
+      path: 'sampledata/models/coral/coral-small_orange.fbx',
+    },
+  ],
+  materials: [
+    {
+      name: 'coral-small_orange_LOW-POLY-COLORS',
+      parameters: [
+        {
+          baseColor: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          baseColorMap: 'coral-small_orange_LOW-POLY-COLORS_MainTex',
+        },
+        {
+          normalMap: null,
+        },
+        {
+          interpolatedColor: null,
+        },
+        {
+          metallic: 0,
+        },
+        {
+          metallicMap: null,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          roughnessMap: null,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/fbx_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+      'BoneIndices',
+      'BoneWeights',
+    ],
+    collision: {},
+    file: 'sampledata/models/coral/coral-small_orange.fbx',
+    name: 'coral-small_orange',
+    recenter: 'root',
+  },
+  samplers: [
+    {
+      file: 'sampledata/models/coral/coral-small_orange_LOW-POLY-COLORS_MainTex.png',
+      name: 'coral-small_orange_LOW-POLY-COLORS_MainTex',
+      pipeline_name: '/Textures/coral-small_orange_LOW-POLY-COLORS_MainTex.png',
+    },
+  ],
+  version: '0.54:2',
+}
