@@ -21,13 +21,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.ar.core.ArCoreApk;
-import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
-import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,7 +39,6 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     private final int requestCode = 100;
-    private boolean mUserRequestedInstall = true;
 
 
     //    权限
@@ -70,11 +62,12 @@ public class MainActivity extends AppCompatActivity {
             showDialog();
         }
 
-        //下载资源
-        copy();
-
         //判断是否有文件夹
-        checkDir();
+        checkDir("ARinEducation");
+        checkDir("ARinEducation/tessdata");
+
+        //判断是否有data文件
+        checkData();
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 //                copy();
 
                 Intent intent=new Intent();
-                intent.setClass(MainActivity.this,ARActivity.class);
+                intent.setClass(MainActivity.this,SelectPictureActivity.class);
                 startActivity(intent);
 
 //                OkHttpClient client = new OkHttpClient();
@@ -107,16 +100,29 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void copy(){
-        Toast.makeText(this, "1dsafa", Toast.LENGTH_LONG).show();
+    private void checkData(){
+        String path=Environment.getExternalStorageDirectory().getAbsolutePath()+"/ARinEducation/tessdata/";
+        String[] datas=new String[]{"eng.traineddata","chi_sim.traineddata"};
+        for (int i=0;i<datas.length;i++){
+            File file=new File(path+datas[i]);
+            if (!file.exists()){
+                System.out.println("不存在"+datas[i]);
+                copy(datas[i]);
+            }else {
+                System.out.println(datas[i]+"已经存在");
+            }
+        }
+    }
 
+    private void copy(String dataName){
+        Toast.makeText(this, "1dsafa", Toast.LENGTH_LONG).show();
         System.out.println("==============从a");
 
         try {
             System.out.println("==============从asset复制文件到内存==============copyAssets============================.");
-            String newPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/DCIM/";
+            String newPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/ARinEducation/tessdata/";
             File files = new File(newPath);
-            String fileName="eng.traineddata";
+            String fileName=dataName;
             File file = new File(newPath, fileName);
 
             InputStream is = null;
@@ -124,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 AssetManager manager = getAssets();
                 if (manager == null) return;
-                is = manager.open("eng.traineddata");
+                is = manager.open(dataName);
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -190,8 +196,9 @@ public class MainActivity extends AppCompatActivity {
         Log.i("myTag", "下载成功");
     }
 
-    private void checkDir(){
-        String path=Environment.getExternalStorageDirectory().getAbsolutePath()+"/ARinEducation";
+    private void checkDir(String filename){
+//        String path=Environment.getExternalStorageDirectory().getAbsolutePath()+"/ARinEducation";
+        String path=Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+filename;
         File file=new File(path);
         if (!file.exists()){
             file.mkdir();
@@ -199,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "1"+path, Toast.LENGTH_LONG).show();
         }else {
             System.out.println("已经存在");
-            Toast.makeText(this, "0"+path, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -283,33 +289,4 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        //check permission
-
-        // check ARCore
-//        try {
-//            switch (ArCoreApk.getInstance().requestInstall(this, mUserRequestedInstall)) {
-//                case INSTALLED:
-//                    // Success, create the AR session.
-//                    break;
-//                case INSTALL_REQUESTED:
-//                    // Ensures next invocation of requestInstall() will either return
-//                    // INSTALLED or throw an exception.
-//                    mUserRequestedInstall = false;
-//                    return;
-//            }
-//        } catch (UnavailableUserDeclinedInstallationException e) {
-//            // Display an appropriate message to the user and return gracefully.
-//            Toast.makeText(this, "TODO: handle exception " + e, Toast.LENGTH_LONG)
-//                    .show();
-//            return;
-//        } catch (UnavailableDeviceNotCompatibleException e){
-//            Toast.makeText(this, "TODO: handle exception " + e, Toast.LENGTH_LONG)
-//                    .show();
-//            return;
-//        }
-    }
 }

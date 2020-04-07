@@ -53,7 +53,7 @@ import java.util.List;
 public class SelectPictureActivity extends AppCompatActivity {
 
 //    常量
-    private String mDataPath= Environment.getExternalStorageDirectory().getAbsolutePath()+"/tesseract/";
+    private String mDataPath= Environment.getExternalStorageDirectory().getAbsolutePath()+"/ARinEducation/";
     private String p="/storage/self/primary/tessdata/";
     public static final int TAKE_PHOTO=1;
     public static final int CHOOSE_PHOTO=2;
@@ -184,11 +184,33 @@ public class SelectPictureActivity extends AppCompatActivity {
         TessBaseAPI mTess = new TessBaseAPI();
         String path = Environment.getExternalStorageDirectory().getPath();
 //        Toast.makeText(getApplicationContext(),"/tesseract/",Toast.LENGTH_LONG).show();
-        mTess.init("/storage/self/primary/", "chi_sim");//mFilePath不知道？
+        mTess.init(mDataPath, "chi_sim");//mFilePath不知道？
+
+//        mTess.setImage(bitmap);
+        Bitmap bitmap=BitmapFactory.decodeResource(this.getResources(),R.drawable.tes);
         mTess.setImage(bitmap);
+
         String OCRresult = mTess.getUTF8Text(); // 拿到字符串结果
         result=OCRresult;
         textView.setText(OCRresult);
+//        mTess.init("/storage/self/primary/", "chi_sim");//mFilePath不知道？
+    }
+
+    private void checkOCR(Bitmap bitmap){
+        String lang = "chi_sim+eng";//中文简体+英文
+        TessBaseAPI mTess = new TessBaseAPI();
+        String path = Environment.getExternalStorageDirectory().getPath();
+//        Toast.makeText(getApplicationContext(),"/tesseract/",Toast.LENGTH_LONG).show();
+        mTess.init(mDataPath, "chi_sim");//mFilePath不知道？
+
+        mTess.setImage(bitmap);
+//        Bitmap bitmap=BitmapFactory.decodeResource(this.getResources(),R.drawable.test);
+//        mTess.setImage(bitmap);
+
+        String OCRresult = mTess.getUTF8Text(); // 拿到字符串结果
+        result=OCRresult;
+        textView.setText(OCRresult);
+//        mTess.init("/storage/self/primary/", "chi_sim");//mFilePath不知道？
     }
 
     //处理图片
@@ -200,8 +222,8 @@ public class SelectPictureActivity extends AppCompatActivity {
         Utils.bitmapToMat(bitmap,mat);
         Imgproc.cvtColor(mat,resultMat,Imgproc.COLOR_BGR2GRAY);//灰度化
         Imgproc.threshold(resultMat,resultMat,100,255,Imgproc.THRESH_BINARY);//二值化
-        Mat erodeElement=Imgproc.getStructuringElement(Imgproc.MORPH_RECT,new Size(26,26));//腐蚀，填充
-        Imgproc.erode(resultMat,resultMat,erodeElement);
+//        Mat erodeElement=Imgproc.getStructuringElement(Imgproc.MORPH_RECT,new Size(26,26));//腐蚀，填充
+//        Imgproc.erode(resultMat,resultMat,erodeElement);
         List<MatOfPoint>contours=new ArrayList<>();//轮廓检测
         Imgproc.findContours(resultMat,contours,new Mat(),Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
         Imgproc.drawContours(resultMat,contours,-1, new Scalar(0,255,0),4);
@@ -240,8 +262,9 @@ public class SelectPictureActivity extends AppCompatActivity {
                         //获取图片
                         bitmap = BitmapFactory.decodeStream(cr.openInputStream(resultUri));
                         compressPic(bitmap);
-                        bitmap=cvPic(bitmap);
+//                        bitmap=cvPic(bitmap);
                         imageView.setImageBitmap(bitmap);
+                        checkOCR(bitmap);
                     } catch (FileNotFoundException e) {
                         Log.e("Exception", e.getMessage(),e);
                     }

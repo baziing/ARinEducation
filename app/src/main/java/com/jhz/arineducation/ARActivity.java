@@ -9,8 +9,11 @@ import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
+import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
+import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException;
+import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
@@ -22,6 +25,7 @@ public class ARActivity extends AppCompatActivity {
 
     private ArFragment arFragment;
     private ModelRenderable andyRenderable;
+    private boolean mUserRequestedInstall = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,5 +67,35 @@ public class ARActivity extends AppCompatActivity {
                     andy.select();
                 });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //check permission
+
+        // check ARCore
+        try {
+            switch (ArCoreApk.getInstance().requestInstall(this, mUserRequestedInstall)) {
+                case INSTALLED:
+                    // Success, create the AR session.
+                    break;
+                case INSTALL_REQUESTED:
+                    // Ensures next invocation of requestInstall() will either return
+                    // INSTALLED or throw an exception.
+                    mUserRequestedInstall = false;
+                    return;
+            }
+        } catch (UnavailableUserDeclinedInstallationException e) {
+            // Display an appropriate message to the user and return gracefully.
+            Toast.makeText(this, "TODO: handle exception " + e, Toast.LENGTH_LONG)
+                    .show();
+            return;
+        } catch (UnavailableDeviceNotCompatibleException e){
+            Toast.makeText(this, "TODO: handle exception " + e, Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
     }
 }
