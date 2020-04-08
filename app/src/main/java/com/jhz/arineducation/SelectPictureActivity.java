@@ -220,16 +220,30 @@ public class SelectPictureActivity extends AppCompatActivity {
         Mat mat=new Mat();
         Mat resultMat=new Mat();
         Utils.bitmapToMat(bitmap,mat);
-        Imgproc.cvtColor(mat,resultMat,Imgproc.COLOR_BGR2GRAY);//灰度化
-        Imgproc.threshold(resultMat,resultMat,100,255,Imgproc.THRESH_BINARY);//二值化
-//        Mat erodeElement=Imgproc.getStructuringElement(Imgproc.MORPH_RECT,new Size(26,26));//腐蚀，填充
-//        Imgproc.erode(resultMat,resultMat,erodeElement);
-        List<MatOfPoint>contours=new ArrayList<>();//轮廓检测
-        Imgproc.findContours(resultMat,contours,new Mat(),Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
-        Imgproc.drawContours(resultMat,contours,-1, new Scalar(0,255,0),4);
+
+//        Imgproc.cvtColor(mat,resultMat,Imgproc.COLOR_BGR2GRAY);//灰度化
+//        Imgproc.threshold(resultMat,resultMat,100,255,Imgproc.THRESH_BINARY);//二值化
+////        Mat erodeElement=Imgproc.getStructuringElement(Imgproc.MORPH_RECT,new Size(26,26));//腐蚀，填充
+////        Imgproc.erode(resultMat,resultMat,erodeElement);
+//        List<MatOfPoint>contours=new ArrayList<>();//轮廓检测
+//        Imgproc.findContours(resultMat,contours,new Mat(),Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
+//        Imgproc.drawContours(resultMat,contours,-1, new Scalar(0,255,0),4);
+
+        Imgproc.cvtColor(mat, resultMat, Imgproc.COLOR_RGB2GRAY);//灰度化
+        Imgproc.blur(resultMat, resultMat, new Size(3, 3));//低通滤波处理
+//        Imgproc.Canny(resultMat, resultMat, 50, 100);//边缘检测处理类
+        Imgproc.threshold(resultMat, resultMat, 165, 255, Imgproc.THRESH_BINARY);//二值化
+        Imgproc.medianBlur(resultMat, resultMat, 3);//中值平滑处理
+        Mat element_9 = new Mat(20, 20, 0, new Scalar(1));
+        Imgproc.morphologyEx(resultMat, element_9, Imgproc.MORPH_CROSS, element_9);//闭运算
+//        List<MatOfPoint>contours=new ArrayList<>();//轮廓检测
+//        Imgproc.findContours(resultMat,contours,new Mat(),Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
+//        Imgproc.drawContours(resultMat,contours,-1, new Scalar(0,255,0),1);
+        
         Utils.matToBitmap(resultMat,bitmap);
         return bitmap;
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -262,7 +276,7 @@ public class SelectPictureActivity extends AppCompatActivity {
                         //获取图片
                         bitmap = BitmapFactory.decodeStream(cr.openInputStream(resultUri));
                         compressPic(bitmap);
-//                        bitmap=cvPic(bitmap);
+                        bitmap=cvPic(bitmap);
                         imageView.setImageBitmap(bitmap);
                         checkOCR(bitmap);
                     } catch (FileNotFoundException e) {
