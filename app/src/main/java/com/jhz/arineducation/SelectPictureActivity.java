@@ -31,6 +31,12 @@ import com.googlecode.tesseract.android.TessBaseAPI;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
+import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
+import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
+
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -108,7 +114,8 @@ public class SelectPictureActivity extends AppCompatActivity {
         ocrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkOCR();
+//                checkOCR();
+                pinyin("haha");
             }
         });
 
@@ -194,6 +201,27 @@ public class SelectPictureActivity extends AppCompatActivity {
         result=OCRresult;
         textView.setText(OCRresult);
 //        mTess.init("/storage/self/primary/", "chi_sim");//mFilePath不知道？
+    }
+
+    private void pinyin(String string){
+        String[] pinyinArray= PinyinHelper.toHanyuPinyinStringArray('行');
+        for (int i=0;i<pinyinArray.length;++i){
+            System.out.println(pinyinArray[i]+"==============================");
+        }
+
+        //输出拼音
+        HanyuPinyinOutputFormat hanyuPinyinOutputFormat=new HanyuPinyinOutputFormat();
+        hanyuPinyinOutputFormat.setToneType(HanyuPinyinToneType.WITH_TONE_MARK);
+        hanyuPinyinOutputFormat.setVCharType(HanyuPinyinVCharType.WITH_U_UNICODE);
+        pinyinArray = null;
+        try {
+            pinyinArray = PinyinHelper.toHanyuPinyinStringArray('行', hanyuPinyinOutputFormat);
+        } catch (BadHanyuPinyinOutputFormatCombination badHanyuPinyinOutputFormatCombination) {
+            badHanyuPinyinOutputFormatCombination.printStackTrace();
+        }
+        for (int i = 0; i < pinyinArray.length; ++i) {
+            System.out.println(pinyinArray[i]+"==============================");
+        }
     }
 
     private void checkOCR(Bitmap bitmap){
