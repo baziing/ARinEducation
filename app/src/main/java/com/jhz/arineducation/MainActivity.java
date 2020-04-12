@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.net.Uri;
@@ -21,6 +22,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.litepal.LitePal;
+import org.litepal.tablemanager.Connector;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,13 +32,6 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,14 +50,46 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        LitePal.initialize(this);
 
         button=(Button)findViewById(R.id.go);
-
 
         //判断是否有权限
         if (!checkPermissions()){
             showDialog();
         }
+
+        //判断是否是第一次启动
+        checkFirstRun();
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent();
+                intent.setClass(MainActivity.this,SelectPictureActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    //判断是否是第一次启动
+    private void checkFirstRun(){
+        SharedPreferences sharedPreferences=getSharedPreferences("FirstRun",0);
+        Boolean firstRun = sharedPreferences.getBoolean("First",true);
+        if (firstRun){
+            sharedPreferences.edit().putBoolean("First",false).commit();
+            System.out.println("第一次启动");
+            dataInitialize();
+        }else{
+            System.out.println("不是第一次启动");
+        }
+    }
+
+    //初始化
+    private void dataInitialize(){
+//        Connector.getDatabase();
+        DBHelper dbHelper=new DBHelper();
+        dbHelper.initialize();
 
         //判断是否有文件夹
         checkDir("ARinEducation");
@@ -68,36 +97,6 @@ public class MainActivity extends AppCompatActivity {
 
         //判断是否有data文件
         checkData();
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-//                copy();
-
-                Intent intent=new Intent();
-                intent.setClass(MainActivity.this,SelectPictureActivity.class);
-                startActivity(intent);
-
-//                OkHttpClient client = new OkHttpClient();
-//                Request request = new Request.Builder()
-//                        .url("http://cdn.duitang.com/uploads/blog/201408/03/20140803160604_ZFu2T.jpeg")
-//                        .build();
-//                Call call = client.newCall(request);
-//                call.enqueue(new Callback() {
-//                    @Override
-//                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
-//                        Log.i("myTag", "下载失败");
-//                    }
-//
-//                    @Override
-//                    public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-//                        writeFile(response);
-//                    }
-//                });
-
-            }
-        });
     }
 
     private void checkData(){
@@ -154,50 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void writeFile(Response response) {
-        InputStream is = null;
-        FileOutputStream fos = null;
-        is = response.body().byteStream();
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath()+"/ARinEducation/";
-        long fileSize1 = response.body().contentLength();
-        System.out.println("大小");
-        System.out.println(fileSize1/1024);
-        String fileName="1.jpg";
-        File file = new File(path, fileName);
-        long total = response.body().contentLength();
-        int len = 0;
-        byte[] buf = new byte[2048];
-        try {
-            fos = new FileOutputStream(file);
-            fos = new FileOutputStream(file);
-            long sum = 0;
-            while ((len = is.read(buf)) != -1) {
-                fos.write(buf, 0, len);
-                sum += len;
-                int progress = (int) (sum * 1.0f / total * 100);
-//                LogUtil.e(TAG,"download progress : " + progress);
-//                mView.onDownloading("",progress);
-            }
-            fos.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (is != null) {
-                    is.close();
-                }
-                if (fos != null) {
-                    fos.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        Log.i("myTag", "下载成功");
-    }
-
     private void checkDir(String filename){
-//        String path=Environment.getExternalStorageDirectory().getAbsolutePath()+"/ARinEducation";
         String path=Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+filename;
         File file=new File(path);
         if (!file.exists()){
@@ -207,18 +163,6 @@ public class MainActivity extends AppCompatActivity {
         }else {
             System.out.println("已经存在");
         }
-    }
-
-    private File getFile(){
-        String root = Environment.getExternalStorageDirectory().getPath();
-        File file = new File(root,"updateDemo.apk");
-        return file;
-    }
-
-    private long getFileStart(){
-        String root = Environment.getExternalStorageDirectory().getPath();
-        File file = new File(root,"updateDemo.apk");
-        return file.length();
     }
 
     private Boolean checkPermissions(){

@@ -168,7 +168,7 @@ public class SelectPictureActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent();
-                intent.setClass(SelectPictureActivity.this,MainActivity.class);
+                intent.setClass(SelectPictureActivity.this,ARActivity.class);
                 startActivity(intent);
             }
         });
@@ -180,8 +180,6 @@ public class SelectPictureActivity extends AppCompatActivity {
         tts.setPitch(1.0f);
         // 设置语速
         tts.setSpeechRate(0.5f);
-        tts.setLanguage(Locale.ENGLISH);
-        tts.speak("h", TextToSpeech.QUEUE_FLUSH, null);
     }
 
 
@@ -291,8 +289,18 @@ public class SelectPictureActivity extends AppCompatActivity {
 
         String OCRresult = mTess.getUTF8Text(); // 拿到字符串结果
         result=OCRresult;
+        OCRresult=checkString(OCRresult);
         textView.setText(OCRresult);
+        checkString(OCRresult);
+        tts.speak(OCRresult, TextToSpeech.QUEUE_FLUSH, null);
 //        mTess.init("/storage/self/primary/", "chi_sim");//mFilePath不知道？
+    }
+
+    private String checkString(String str){
+        String reg = "[^\u4e00-\u9fa5]";
+        str = str.replaceAll(reg, "");
+        System.out.println(str);
+        return str;
     }
 
     //处理图片

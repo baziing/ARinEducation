@@ -58,6 +58,7 @@ dependencies {
     implementation 'com.google.ar.sceneform.ux:sceneform-ux:1.15.0'
     implementation 'com.google.ar.sceneform:core:1.15.0'
     implementation files('libs/pinyin4j-2.5.0.jar')
+    implementation 'org.litepal.android:java:3.0.0'
 }
 
 
