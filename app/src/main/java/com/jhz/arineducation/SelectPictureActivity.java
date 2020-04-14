@@ -70,6 +70,7 @@ public class SelectPictureActivity extends AppCompatActivity {
     private Bitmap bitmap;//获取测试图片
     private Uri imageUri;
     private String result;
+    private String text;
 
 //    UI元件
     private Button cameraButton;
@@ -294,6 +295,7 @@ public class SelectPictureActivity extends AppCompatActivity {
         checkString(OCRresult);
         tts.speak(OCRresult, TextToSpeech.QUEUE_FLUSH, null);
 //        mTess.init("/storage/self/primary/", "chi_sim");//mFilePath不知道？
+        text=OCRresult;
     }
 
     private String checkString(String str){
@@ -369,6 +371,20 @@ public class SelectPictureActivity extends AppCompatActivity {
                         bitmap=cvPic(bitmap);
                         imageView.setImageBitmap(bitmap);
                         checkOCR(bitmap);
+
+                        DBHelper dbHelper=new DBHelper();
+                        if (dbHelper.findobject(text)!=null){//在数据库中存在
+                            Intent intent=new Intent();
+                            intent.putExtra("data",text);
+                            intent.setClass(SelectPictureActivity.this,ARActivity.class);
+                            startActivity(intent);
+                        }else {//在数据库中不存在
+                            Intent intent=new Intent();
+                            intent.putExtra("data",text);
+                            intent.setClass(SelectPictureActivity.this,TextActivity.class);
+                            startActivity(intent);
+                        }
+
                     } catch (FileNotFoundException e) {
                         Log.e("Exception", e.getMessage(),e);
                     }

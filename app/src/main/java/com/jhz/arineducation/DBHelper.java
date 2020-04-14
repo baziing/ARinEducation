@@ -1,6 +1,9 @@
 package com.jhz.arineducation;
 
+import org.litepal.LitePal;
 import org.litepal.tablemanager.Connector;
+
+import java.util.List;
 
 public class DBHelper {
 
@@ -33,5 +36,13 @@ public class DBHelper {
                 System.out.println(e);
             }
         }
+    }
+
+    public String findobject(String str){
+        List<Model>models= LitePal.where("characters like ?","%"+str+"%").find(Model.class);
+        for (Model model:models){
+            return model.getModelName();
+        }
+        return null;
     }
 }
