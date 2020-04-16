@@ -75,11 +75,11 @@ public class SelectPictureActivity extends AppCompatActivity {
 //    UI元件
     private Button cameraButton;
     private Button albumButton;
-    private Button backButton;
-    private Button ocrButton;
-    private TextView textView;//输出结果
-    private ImageView imageView;
-    private Button speakButton;
+//    private Button backButton;
+//    private Button ocrButton;
+//    private TextView textView;//输出结果
+//    private ImageView imageView;
+//    private Button speakButton;
 
     private TextToSpeech tts;
 
@@ -121,11 +121,11 @@ public class SelectPictureActivity extends AppCompatActivity {
 //        初始化
         cameraButton=(Button)findViewById(R.id.camera);
         albumButton=(Button)findViewById(R.id.album);
-        backButton=(Button)findViewById(R.id.back);
-        ocrButton=(Button)findViewById(R.id.ocr);
-        textView=(TextView) findViewById(R.id.result);
-        imageView=(ImageView)findViewById(R.id.img);
-        speakButton=(Button)findViewById(R.id.speak);
+//        backButton=(Button)findViewById(R.id.back);
+//        ocrButton=(Button)findViewById(R.id.ocr);
+//        textView=(TextView) findViewById(R.id.result);
+//        imageView=(ImageView)findViewById(R.id.img);
+//        speakButton=(Button)findViewById(R.id.speak);
 
         List<String> permissionList = new ArrayList<>();
 
@@ -147,32 +147,32 @@ public class SelectPictureActivity extends AppCompatActivity {
             }
         });
 
-//        测试ocr
-        ocrButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                checkOCR();
-                pinyin("haha");
-            }
-        });
-
-//        speak
-        speakButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                init();
-            }
-        });
-
-//        返回
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent();
-                intent.setClass(SelectPictureActivity.this,ARActivity.class);
-                startActivity(intent);
-            }
-        });
+////        测试ocr
+//        ocrButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                checkOCR();
+//                pinyin("haha");
+//            }
+//        });
+//
+////        speak
+//        speakButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                init();
+//            }
+//        });
+//
+////        返回
+//        backButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent=new Intent();
+//                intent.setClass(SelectPictureActivity.this,ARActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
     }
 
@@ -252,7 +252,7 @@ public class SelectPictureActivity extends AppCompatActivity {
 
         String OCRresult = mTess.getUTF8Text(); // 拿到字符串结果
         result=OCRresult;
-        textView.setText(OCRresult);
+//        textView.setText(OCRresult);
 //        mTess.init("/storage/self/primary/", "chi_sim");//mFilePath不知道？
     }
 
@@ -291,7 +291,7 @@ public class SelectPictureActivity extends AppCompatActivity {
         String OCRresult = mTess.getUTF8Text(); // 拿到字符串结果
         result=OCRresult;
         OCRresult=checkString(OCRresult);
-        textView.setText(OCRresult);
+//        textView.setText(OCRresult);
         checkString(OCRresult);
         tts.speak(OCRresult, TextToSpeech.QUEUE_FLUSH, null);
 //        mTess.init("/storage/self/primary/", "chi_sim");//mFilePath不知道？
@@ -353,7 +353,7 @@ public class SelectPictureActivity extends AppCompatActivity {
                     try {
                         // 调用BitmapFactory的decodeStream()方法将imageUri保存中的这张照片解析成Bitmap对象
                         bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-                        imageView.setImageBitmap(bitmap);// 将其设置到一个ImageView中显示
+//                        imageView.setImageBitmap(bitmap);// 将其设置到一个ImageView中显示
                     }catch (FileNotFoundException e){
                         e.printStackTrace();
                     }
@@ -369,7 +369,7 @@ public class SelectPictureActivity extends AppCompatActivity {
                         bitmap = BitmapFactory.decodeStream(cr.openInputStream(resultUri));
                         compressPic(bitmap);
                         bitmap=cvPic(bitmap);
-                        imageView.setImageBitmap(bitmap);
+//                        imageView.setImageBitmap(bitmap);
                         checkOCR(bitmap);
 
                         DBHelper dbHelper=new DBHelper();

@@ -14,6 +14,7 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class TextActivity extends AppCompatActivity {
@@ -73,23 +74,55 @@ public class TextActivity extends AppCompatActivity {
     }
 
     private void pinyin(String string){
-        String[] pinyinArray= PinyinHelper.toHanyuPinyinStringArray('行');
-        for (int i=0;i<pinyinArray.length;++i){
-            System.out.println(pinyinArray[i]+"==============================");
+        ArrayList<String>arrayList=new ArrayList<String>();
+        char[] c=string.toCharArray();
+//        String[] pinyinArray= PinyinHelper.toHanyuPinyinStringArray(c[0]);
+////        String[] pinyinArray= PinyinHelper.toHanyuPinyinStringArray('行');
+//        for (int i=0;i<pinyinArray.length;++i){
+//            System.out.println(pinyinArray[i]+"==============================");
+//        }
+
+        for (int i=0;i<c.length;i++){
+            String[] pinyinArray= PinyinHelper.toHanyuPinyinStringArray(c[i]);
+            arrayList.add(tone(c[i]));
         }
 
-        //输出拼音
+        //显示
+        String pinyin="";
+        for (int i=0;i<arrayList.size();i++){
+            pinyin=pinyin+arrayList.get(i)+' ';
+        }
+        System.out.println(pinyin);
+
+//        //输出拼音
+//        HanyuPinyinOutputFormat hanyuPinyinOutputFormat=new HanyuPinyinOutputFormat();
+//        hanyuPinyinOutputFormat.setToneType(HanyuPinyinToneType.WITH_TONE_MARK);
+//        hanyuPinyinOutputFormat.setVCharType(HanyuPinyinVCharType.WITH_U_UNICODE);
+//        pinyinArray = null;
+//        try {
+//            pinyinArray = PinyinHelper.toHanyuPinyinStringArray('行', hanyuPinyinOutputFormat);
+//        } catch (BadHanyuPinyinOutputFormatCombination badHanyuPinyinOutputFormatCombination) {
+//            badHanyuPinyinOutputFormatCombination.printStackTrace();
+//        }
+//        for (int i = 0; i < pinyinArray.length; ++i) {
+//            System.out.println(pinyinArray[i]+"==============================");
+//        }
+    }
+
+    private String tone(char c){
+        String[] pinyinArray= PinyinHelper.toHanyuPinyinStringArray(c);
         HanyuPinyinOutputFormat hanyuPinyinOutputFormat=new HanyuPinyinOutputFormat();
         hanyuPinyinOutputFormat.setToneType(HanyuPinyinToneType.WITH_TONE_MARK);
         hanyuPinyinOutputFormat.setVCharType(HanyuPinyinVCharType.WITH_U_UNICODE);
         pinyinArray = null;
         try {
-            pinyinArray = PinyinHelper.toHanyuPinyinStringArray('行', hanyuPinyinOutputFormat);
+            pinyinArray = PinyinHelper.toHanyuPinyinStringArray(c, hanyuPinyinOutputFormat);
         } catch (BadHanyuPinyinOutputFormatCombination badHanyuPinyinOutputFormatCombination) {
             badHanyuPinyinOutputFormatCombination.printStackTrace();
         }
         for (int i = 0; i < pinyinArray.length; ++i) {
             System.out.println(pinyinArray[i]+"==============================");
         }
+        return pinyinArray[0];
     }
 }
