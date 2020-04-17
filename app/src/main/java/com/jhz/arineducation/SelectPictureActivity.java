@@ -2,8 +2,10 @@ package com.jhz.arineducation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -22,6 +24,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -72,6 +75,7 @@ public class SelectPictureActivity extends AppCompatActivity {
     private String result;
     private String text;
 
+
 //    UI元件
     private Button cameraButton;
     private Button albumButton;
@@ -83,10 +87,20 @@ public class SelectPictureActivity extends AppCompatActivity {
 
     private TextToSpeech tts;
 
+    private Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ocr);
+
+        toolbar=(Toolbar)findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.test);
         // 参数Context,TextToSpeech.OnInitListener
@@ -376,6 +390,7 @@ public class SelectPictureActivity extends AppCompatActivity {
                         if (dbHelper.findobject(text)!=null){//在数据库中存在
                             Intent intent=new Intent();
                             intent.putExtra("data",text);
+                            intent.putExtra("modelName",dbHelper.findobject(text));
                             intent.setClass(SelectPictureActivity.this,ARActivity.class);
                             startActivity(intent);
                         }else {//在数据库中不存在
@@ -397,5 +412,33 @@ public class SelectPictureActivity extends AppCompatActivity {
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                this.finish();
+                break;
+                default:
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        tts.stop();
+        tts.shutdown();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (tts!=null){
+            tts.stop();
+            tts.shutdown();
+            tts=null;
+        }
+        super.onDestroy();
     }
 }

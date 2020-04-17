@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/background_sea"
-    tools:context=".MainActivity"
-    android:gravity="center">
+    tools:context=".MainActivity">
 
     <Button
         android:id="@+id/go"
@@ -19,6 +18,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:drawableLeft="@drawable/camera_alt_sea_36x36"
-        android:gravity="center"/>
+        android:layout_centerInParent="true"/>
 
 </RelativeLayout>

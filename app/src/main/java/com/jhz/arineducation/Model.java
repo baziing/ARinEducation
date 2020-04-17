@@ -6,11 +6,13 @@ public class Model extends LitePalSupport {
     private int type;
     private String characters;
     private String modelName;
+    private String pinyin;
 
-    Model(int type,String characters,String modelName){
+    Model(int type,String characters,String modelName,String pinyin){
         this.type=type;
         this.characters=characters;
         this.modelName=modelName;
+        this.pinyin=pinyin;
     }
 
     public String getCharacters() {
@@ -35,5 +37,13 @@ public class Model extends LitePalSupport {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public void setPinyin(String pinyin) {
+        this.pinyin = pinyin;
+    }
+
+    public String getPinyin() {
+        return pinyin;
     }
 }

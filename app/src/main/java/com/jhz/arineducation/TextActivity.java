@@ -1,10 +1,15 @@
 package com.jhz.arineducation;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +26,10 @@ public class TextActivity extends AppCompatActivity {
 
     private TextView textView;
     private TextToSpeech tts;
+    private TextView textView1;
+    private ImageButton imageButton;
+
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +38,32 @@ public class TextActivity extends AppCompatActivity {
 
         textView=(TextView)findViewById(R.id.textView);
         textView.setText("hellp");
+        textView1=(TextView)findViewById(R.id.pinyin);
+        imageButton=(ImageButton)findViewById(R.id.replay);
+
+        toolbar=(Toolbar)findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         Intent intent=getIntent();
         textView.setText(intent.getStringExtra("data"));
+        String str=intent.getStringExtra("data");
 
+        Pinyin pinyin=new Pinyin(str);
+        textView.setText(pinyin.getOutput());
+//        char[] charstr=str.toCharArray();
+//        String show="  ";
+//        for (int i=0;i<charstr.length;i++){
+//            show=show+charstr[i]+"  ";
+//        }
+//        textView.setText(show);
+
+
+//        init();
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -60,8 +91,15 @@ public class TextActivity extends AppCompatActivity {
                 }
             }
         });
-
         init();
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tts.speak(str, TextToSpeech.QUEUE_FLUSH, null);
+                System.out.println("?????????????????");
+            }
+        });
 
         pinyin(intent.getStringExtra("data"));
     }
@@ -93,6 +131,7 @@ public class TextActivity extends AppCompatActivity {
             pinyin=pinyin+arrayList.get(i)+' ';
         }
         System.out.println(pinyin);
+        textView1.setText(pinyin);
 
 //        //输出拼音
 //        HanyuPinyinOutputFormat hanyuPinyinOutputFormat=new HanyuPinyinOutputFormat();
@@ -124,5 +163,16 @@ public class TextActivity extends AppCompatActivity {
             System.out.println(pinyinArray[i]+"==============================");
         }
         return pinyinArray[0];
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                this.finish();
+                break;
+            default:
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

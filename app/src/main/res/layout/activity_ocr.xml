@@ -6,14 +6,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/background_sea"
-    tools:context=".SelectPictureActivity"
-    android:gravity="center">
+    tools:context=".SelectPictureActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/arrow_back_black_36x36"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center">
+        android:layout_centerInParent="true">
         <Button
             android:id="@+id/camera"
             android:text="@string/ocr_camera"
