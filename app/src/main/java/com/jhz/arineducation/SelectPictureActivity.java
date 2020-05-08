@@ -14,6 +14,7 @@ import android.Manifest;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -26,6 +27,8 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -79,6 +82,9 @@ public class SelectPictureActivity extends AppCompatActivity {
 //    UI元件
     private Button cameraButton;
     private Button albumButton;
+    private Button textButton;
+    private AutoCompleteTextView autoCompleteTextView;
+    private Button deleteButton;
 //    private Button backButton;
 //    private Button ocrButton;
 //    private TextView textView;//输出结果
@@ -135,15 +141,51 @@ public class SelectPictureActivity extends AppCompatActivity {
 //        初始化
         cameraButton=(Button)findViewById(R.id.camera);
         albumButton=(Button)findViewById(R.id.album);
+        textButton=(Button)findViewById(R.id.search);
+        deleteButton=(Button)findViewById(R.id.delete);
+        autoCompleteTextView=(AutoCompleteTextView)findViewById(R.id.input);
 //        backButton=(Button)findViewById(R.id.back);
 //        ocrButton=(Button)findViewById(R.id.ocr);
 //        textView=(TextView) findViewById(R.id.result);
 //        imageView=(ImageView)findViewById(R.id.img);
 //        speakButton=(Button)findViewById(R.id.speak);
 
+        initAutoComplete("history",autoCompleteTextView);
+
         List<String> permissionList = new ArrayList<>();
 
         init();
+
+        //搜索
+        textButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //保存
+                saveHistory("history",autoCompleteTextView);
+
+                String text=autoCompleteTextView.getText().toString();
+                DBHelper dbHelper=new DBHelper();
+                if (dbHelper.findobject(text)!=null){//在数据库中存在
+                    Intent intent=new Intent();
+                    intent.putExtra("data",text);
+                    intent.putExtra("modelName",dbHelper.findobject(text));
+                    intent.setClass(SelectPictureActivity.this,ARActivity.class);
+                    startActivity(intent);
+                }else {//在数据库中不存在
+                    Intent intent=new Intent();
+                    intent.putExtra("data",text);
+                    intent.setClass(SelectPictureActivity.this,TextActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteHistory("history",autoCompleteTextView);
+            }
+        });
 
 //        开启摄像机
         cameraButton.setOnClickListener(new View.OnClickListener() {
@@ -188,6 +230,56 @@ public class SelectPictureActivity extends AppCompatActivity {
 //            }
 //        });
 
+    }
+
+    private void initAutoComplete(String field,AutoCompleteTextView autoCompleteTextView){
+        SharedPreferences sharedPreferences=getSharedPreferences("network_url", 0);
+        String longhistory = sharedPreferences.getString("history", "");
+        String[]  hisArrays = longhistory.split(",");
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, hisArrays);
+
+        if(hisArrays.length > 50){
+            String[] newArrays = new String[50];
+            System.arraycopy(hisArrays, 0, newArrays, 0, 50);
+            adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_dropdown_item_1line, newArrays);
+        }
+
+        autoCompleteTextView.setAdapter(adapter);
+        autoCompleteTextView.setDropDownHeight(350);
+        autoCompleteTextView.setThreshold(1);
+        autoCompleteTextView.setCompletionHint("最近的5条记录");
+        autoCompleteTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                AutoCompleteTextView view = (AutoCompleteTextView) v;
+                if (hasFocus) {
+                    view.showDropDown();
+                }
+            }
+        });
+    }
+
+    private void saveHistory(String field,AutoCompleteTextView autoCompleteTextView){
+        String text=autoCompleteTextView.getText().toString();
+        SharedPreferences sharedPreferences=getSharedPreferences("network_url", 0);
+        String longhistory = sharedPreferences.getString(field, "");
+
+        if (!longhistory.contains(text + ",")) {
+            StringBuilder sb = new StringBuilder(longhistory);
+            System.out.println(text);
+            sb.insert(0, text + ",");
+            sharedPreferences.edit().putString("history", sb.toString()).commit();
+        }
+
+        initAutoComplete("history",autoCompleteTextView);
+    }
+
+    private void deleteHistory(String field,AutoCompleteTextView autoCompleteTextView){
+        SharedPreferences sharedPreferences=getSharedPreferences("network_url", 0);
+        sharedPreferences.edit().clear().commit();
+        initAutoComplete("history",autoCompleteTextView);
     }
 
     private void init(){

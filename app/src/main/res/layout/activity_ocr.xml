@@ -19,19 +19,64 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_centerInParent="true">
+
+        <AutoCompleteTextView
+            android:hint="输入关键词"
+            android:id="@+id/input"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/delete"
+                android:text="delete"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"/>
+
+            <Button
+                android:id="@+id/search"
+                android:text="serach"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"/>
+
+        </LinearLayout>
+
+<!--        <Button-->
+<!--            android:id="@+id/search"-->
+<!--            android:text="serach"-->
+<!--            android:layout_width="200dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:drawableLeft="@drawable/camera_alt_sea_36x36"-->
+<!--            android:layout_marginTop="30dp"/>-->
+
+<!--        <Button-->
+<!--            android:id="@+id/delete"-->
+<!--            android:text="delete"-->
+<!--            android:layout_width="200dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:drawableLeft="@drawable/camera_alt_sea_36x36"-->
+<!--            android:layout_marginTop="30dp"/>-->
+
         <Button
             android:id="@+id/camera"
             android:text="@string/ocr_camera"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/camera_alt_sea_36x36"/>
+            android:drawableLeft="@drawable/camera_alt_sea_36x36"
+            android:layout_marginTop="30dp"/>
         <Button
             android:id="@+id/album"
             android:text="@string/ocr_album"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/insert_photo_sea_36x36"
-            android:layout_marginTop="50dp"/>
+            android:layout_marginTop="30dp"/>
     </LinearLayout>
 
 <!--    <Button-->
