@@ -63,7 +63,7 @@ public class Pinyin {
         hanyuPinyinOutputFormat.setVCharType(HanyuPinyinVCharType.WITH_U_UNICODE);
         pinyinArray = null;
         try {
-            pinyinArray = PinyinHelper.toHanyuPinyinStringArray('子', hanyuPinyinOutputFormat);
+            pinyinArray = PinyinHelper.toHanyuPinyinStringArray(c, hanyuPinyinOutputFormat);
         } catch (BadHanyuPinyinOutputFormatCombination badHanyuPinyinOutputFormatCombination) {
             badHanyuPinyinOutputFormatCombination.printStackTrace();
         }

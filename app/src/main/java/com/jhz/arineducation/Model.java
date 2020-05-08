@@ -4,19 +4,25 @@ import org.litepal.crud.LitePalSupport;
 
 public class Model extends LitePalSupport {
     private int type;
-    private String characters;
+    private String chi;
+    private String eng;
     private String modelName;
     private String pinyin;
 
-    Model(int type,String characters,String modelName,String pinyin){
+    Model(int type,String chi,String modelName,String pinyin,String eng){
         this.type=type;
-        this.characters=characters;
+        this.chi=chi;
+        this.eng=eng;
         this.modelName=modelName;
         this.pinyin=pinyin;
     }
 
-    public String getCharacters() {
-        return characters;
+    public String getChi() {
+        return chi;
+    }
+
+    public String getEng() {
+        return eng;
     }
 
     public String getModelName() {
@@ -27,8 +33,12 @@ public class Model extends LitePalSupport {
         return type;
     }
 
-    public void setCharacters(String characters) {
-        this.characters = characters;
+    public void setChi(String chi) {
+        this.chi = chi;
+    }
+
+    public void setEng(String eng) {
+        this.eng = eng;
     }
 
     public void setModelName(String modelName) {

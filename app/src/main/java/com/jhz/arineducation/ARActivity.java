@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -66,9 +67,27 @@ public class ARActivity extends AppCompatActivity {
         String modelName=intent.getStringExtra("modelName");
         modelName=modelName+".sfb";
 
-        Pinyin pinyin=new Pinyin(str);
-        textView.setText(pinyin.getOutput());
-        textView1.setText(pinyin.getTone());
+        SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
+        String language=sharedPreferences.getString("language","");
+        if (language.indexOf("eng")!=-1){
+            textView.setText(str);
+        }else{
+            Pinyin pinyin=new Pinyin(str);
+            textView.setText(pinyin.getOutput());
+            textView1.setText(pinyin.getTone());
+        }
+//        Pinyin pinyin=new Pinyin(str);
+//        textView.setText(pinyin.getOutput());
+//        textView1.setText(pinyin.getTone());
+
+//        SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
+//        String language=sharedPreferences.getString("language","");
+//        if(language.indexOf("chi_sim")!=-1){
+//            textView1.setText(pinyin.getTone());
+//        }else if (language.indexOf("eng")!=-1){
+//        }else {
+//            textView1.setText(pinyin.getTone());
+//        }
 
         // When you build a Renderable, Sceneform loads its resources in the background while returning
         // a CompletableFuture. Call thenAccept(), handle(), or check isDone() before calling get().
@@ -120,7 +139,18 @@ public class ARActivity extends AppCompatActivity {
             Demo即可体验到文字转中文语言。
              */
                     // setLanguage设置语言
-                    int result = tts.setLanguage(Locale.CHINA);
+                    int result;
+                    SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
+                    String language=sharedPreferences.getString("language","");
+                    if(language.indexOf("chi_sim")!=-1){
+                        result = tts.setLanguage(Locale.CHINA);
+                    }else if (language.indexOf("eng")!=-1){
+                        result = tts.setLanguage(Locale.ENGLISH);
+                    }else {
+                        result = tts.setLanguage(Locale.CHINA);
+                    }
+
+//                    int result = tts.setLanguage(Locale.CHINA);
                     // TextToSpeech.LANG_MISSING_DATA：表示语言的数据丢失
                     // TextToSpeech.LANG_NOT_SUPPORTED：不支持
                     if (result == TextToSpeech.LANG_MISSING_DATA

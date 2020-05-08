@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -83,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
         }else{
             System.out.println("不是第一次启动");
         }
+        DBHelper dbHelper=new DBHelper();
+        dbHelper.initialize();
     }
 
     //初始化
@@ -97,6 +100,12 @@ public class MainActivity extends AppCompatActivity {
 
         //判断是否有data文件
         checkData();
+
+        //初始化语言设置
+        SharedPreferences.Editor editor=getSharedPreferences("network_url",MODE_PRIVATE).edit();
+        editor.putString("language","chi_sim");
+        editor.apply();
+
     }
 
     private void checkData(){

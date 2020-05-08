@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,6 +32,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -85,6 +88,9 @@ public class SelectPictureActivity extends AppCompatActivity {
     private Button textButton;
     private AutoCompleteTextView autoCompleteTextView;
     private Button deleteButton;
+    private RadioGroup radioGroup;
+    private RadioButton chiButton;
+    private RadioButton engButton;
 //    private Button backButton;
 //    private Button ocrButton;
 //    private TextView textView;//输出结果
@@ -144,11 +150,26 @@ public class SelectPictureActivity extends AppCompatActivity {
         textButton=(Button)findViewById(R.id.search);
         deleteButton=(Button)findViewById(R.id.delete);
         autoCompleteTextView=(AutoCompleteTextView)findViewById(R.id.input);
+        radioGroup=(RadioGroup)findViewById(R.id.group);
+        chiButton=(RadioButton)findViewById(R.id.chi);
+        engButton=(RadioButton)findViewById(R.id.eng);
 //        backButton=(Button)findViewById(R.id.back);
 //        ocrButton=(Button)findViewById(R.id.ocr);
 //        textView=(TextView) findViewById(R.id.result);
 //        imageView=(ImageView)findViewById(R.id.img);
 //        speakButton=(Button)findViewById(R.id.speak);
+
+        radioGroup.setOnCheckedChangeListener(new MyRadioButtonListener());
+
+        SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
+        String language=sharedPreferences.getString("language","");
+        if(language.indexOf("chi_sim")!=-1){
+            chiButton.setChecked(true);
+        }else if (language.indexOf("eng")!=-1){
+            engButton.setChecked(true);
+        }else {
+            chiButton.setChecked(true);
+        }
 
         initAutoComplete("history",autoCompleteTextView);
 
@@ -164,19 +185,63 @@ public class SelectPictureActivity extends AppCompatActivity {
                 saveHistory("history",autoCompleteTextView);
 
                 String text=autoCompleteTextView.getText().toString();
-                DBHelper dbHelper=new DBHelper();
-                if (dbHelper.findobject(text)!=null){//在数据库中存在
-                    Intent intent=new Intent();
-                    intent.putExtra("data",text);
-                    intent.putExtra("modelName",dbHelper.findobject(text));
-                    intent.setClass(SelectPictureActivity.this,ARActivity.class);
-                    startActivity(intent);
-                }else {//在数据库中不存在
-                    Intent intent=new Intent();
-                    intent.putExtra("data",text);
-                    intent.setClass(SelectPictureActivity.this,TextActivity.class);
-                    startActivity(intent);
+
+                text=checkString(text);
+                System.out.println(text+"+++++++++++_____________________");
+                if (!TextUtils.isEmpty(text))
+                {
+                    SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
+                    String language=sharedPreferences.getString("language","");
+                    if (language.indexOf("eng")!=-1){
+                        System.out.println("eng+++++++++++++++++++++++++++++++");
+                        DBHelper dbHelper=new DBHelper();
+                        if (dbHelper.findObjectByEng(text)!=null){//在数据库中存在
+                            Intent intent=new Intent();
+                            intent.putExtra("data",text);
+                            intent.putExtra("modelName",dbHelper.findObjectByEng(text));
+                            intent.setClass(SelectPictureActivity.this,ARActivity.class);
+//                            startActivity(intent);
+                        }else {//在数据库中不存在
+                            Intent intent=new Intent();
+                            intent.putExtra("data",text);
+                            intent.setClass(SelectPictureActivity.this,TextActivity.class);
+//                            startActivity(intent);
+                        }
+                    }else {
+                        System.out.println("chi+++++++++++++++++++++++++++++++=====");
+                        System.out.println(text+"+++++++++++++++++++++++++++++++=====");
+                        DBHelper dbHelper=new DBHelper();
+                        if (dbHelper.findObjectByChi(text)!=null){//在数据库中存在
+                            System.out.println(dbHelper.findObjectByChi(text)+"_____________");
+                            Intent intent=new Intent();
+                            intent.putExtra("data",text);
+                            intent.putExtra("modelName",dbHelper.findObjectByChi(text));
+                            intent.setClass(SelectPictureActivity.this,ARActivity.class);
+//                            startActivity(intent);
+                        }else {//在数据库中不存在
+                            Intent intent=new Intent();
+                            intent.putExtra("data",text);
+                            intent.setClass(SelectPictureActivity.this,TextActivity.class);
+//                            startActivity(intent);
+                        }
+                    }
+                }else {
+                    Toast.makeText(getApplicationContext(),"请输入正确的格式",Toast.LENGTH_LONG).show();
+
                 }
+//                DBHelper dbHelper=new DBHelper();
+//                if (dbHelper.findobject(text)!=null){//在数据库中存在
+//                    Intent intent=new Intent();
+//                    intent.putExtra("data",text);
+//                    intent.putExtra("modelName",dbHelper.findobject(text));
+//                    intent.setClass(SelectPictureActivity.this,ARActivity.class);
+//                    startActivity(intent);
+//                }else {//在数据库中不存在
+//                    Intent intent=new Intent();
+//                    intent.putExtra("data",text);
+//                    intent.setClass(SelectPictureActivity.this,TextActivity.class);
+//                    startActivity(intent);
+//                }
             }
         });
 
@@ -350,6 +415,17 @@ public class SelectPictureActivity extends AppCompatActivity {
         TessBaseAPI mTess = new TessBaseAPI();
         String path = Environment.getExternalStorageDirectory().getPath();
 //        Toast.makeText(getApplicationContext(),"/tesseract/",Toast.LENGTH_LONG).show();
+
+        SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
+        String language=sharedPreferences.getString("language","");
+        if(language.indexOf("chi_sim")!=-1){
+            mTess.init(mDataPath, "chi_sim");
+        }else if (language.indexOf("eng")!=-1){
+            mTess.init(mDataPath, "eng");
+        }else {
+            mTess.init(mDataPath, "chi_sim");
+        }
+
         mTess.init(mDataPath, "chi_sim");//mFilePath不知道？
 
 //        mTess.setImage(bitmap);
@@ -388,7 +464,17 @@ public class SelectPictureActivity extends AppCompatActivity {
         TessBaseAPI mTess = new TessBaseAPI();
         String path = Environment.getExternalStorageDirectory().getPath();
 //        Toast.makeText(getApplicationContext(),"/tesseract/",Toast.LENGTH_LONG).show();
-        mTess.init(mDataPath, "chi_sim");//mFilePath不知道？
+//        mTess.init(mDataPath, "chi_sim");//mFilePath不知道？
+
+        SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
+        String language=sharedPreferences.getString("language","");
+        if(language.indexOf("chi_sim")!=-1){
+            mTess.init(mDataPath, "chi_sim");
+        }else if (language.indexOf("eng")!=-1){
+            mTess.init(mDataPath, "eng");
+        }else {
+            mTess.init(mDataPath, "chi_sim");
+        }
 
         mTess.setImage(bitmap);
 //        Bitmap bitmap=BitmapFactory.decodeResource(this.getResources(),R.drawable.test);
@@ -405,9 +491,28 @@ public class SelectPictureActivity extends AppCompatActivity {
     }
 
     private String checkString(String str){
-        String reg = "[^\u4e00-\u9fa5]";
-        str = str.replaceAll(reg, "");
-        System.out.println(str);
+        SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
+        String language=sharedPreferences.getString("language","");
+        if (language.indexOf("eng")!=-1){
+            String string = "";
+            if (str.equals("")) {
+                return "";
+            }
+            for (int i = 0; i < str.length(); i++) {
+                char ch = str.charAt(i);
+                if (Character.isLetter(ch)) {
+                    string = string + ch;
+                }
+            }
+            str=string;
+        }else {
+            String reg = "[^\u4e00-\u9fa5]";
+            str = str.replaceAll(reg, "");
+            System.out.println(str);
+        }
+//        String reg = "[^\u4e00-\u9fa5]";
+//        str = str.replaceAll(reg, "");
+//        System.out.println(str);
         return str;
     }
 
@@ -478,19 +583,89 @@ public class SelectPictureActivity extends AppCompatActivity {
 //                        imageView.setImageBitmap(bitmap);
                         checkOCR(bitmap);
 
-                        DBHelper dbHelper=new DBHelper();
-                        if (dbHelper.findobject(text)!=null){//在数据库中存在
-                            Intent intent=new Intent();
-                            intent.putExtra("data",text);
-                            intent.putExtra("modelName",dbHelper.findobject(text));
-                            intent.setClass(SelectPictureActivity.this,ARActivity.class);
-                            startActivity(intent);
-                        }else {//在数据库中不存在
-                            Intent intent=new Intent();
-                            intent.putExtra("data",text);
-                            intent.setClass(SelectPictureActivity.this,TextActivity.class);
-                            startActivity(intent);
+                        if (!TextUtils.isEmpty(text))
+                        {
+                            SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
+                            String language=sharedPreferences.getString("language","");
+                            if (language.indexOf("eng")!=-1){
+                                DBHelper dbHelper=new DBHelper();
+                                if (dbHelper.findObjectByEng(text)!=null){//在数据库中存在
+                                    Intent intent=new Intent();
+                                    intent.putExtra("data",text);
+                                    intent.putExtra("modelName",dbHelper.findObjectByEng(text));
+                                    intent.setClass(SelectPictureActivity.this,ARActivity.class);
+                                    startActivity(intent);
+                                }else {//在数据库中不存在
+                                    Intent intent=new Intent();
+                                    intent.putExtra("data",text);
+                                    intent.setClass(SelectPictureActivity.this,TextActivity.class);
+                                    startActivity(intent);
+                                }
+                            }else {
+                                DBHelper dbHelper=new DBHelper();
+                                if (dbHelper.findObjectByChi(text)!=null){//在数据库中存在
+                                    Intent intent=new Intent();
+                                    intent.putExtra("data",text);
+                                    intent.putExtra("modelName",dbHelper.findObjectByChi(text));
+                                    intent.setClass(SelectPictureActivity.this,ARActivity.class);
+                                    startActivity(intent);
+                                }else {//在数据库中不存在
+                                    Intent intent=new Intent();
+                                    intent.putExtra("data",text);
+                                    intent.setClass(SelectPictureActivity.this,TextActivity.class);
+                                    startActivity(intent);
+                                }
+                            }
+                        }else {
+                            Toast.makeText(getApplicationContext(),"请输入正确的格式",Toast.LENGTH_LONG).show();
+
                         }
+
+//                        SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
+//                        String language=sharedPreferences.getString("language","");
+//                        if (language.indexOf("eng")!=-1){
+//                            DBHelper dbHelper=new DBHelper();
+//                            if (dbHelper.findObjectByEng(text)!=null){//在数据库中存在
+//                                Intent intent=new Intent();
+//                                intent.putExtra("data",text);
+//                                intent.putExtra("modelName",dbHelper.findObjectByEng(text));
+//                                intent.setClass(SelectPictureActivity.this,ARActivity.class);
+//                                startActivity(intent);
+//                            }else {//在数据库中不存在
+//                                Intent intent=new Intent();
+//                                intent.putExtra("data",text);
+//                                intent.setClass(SelectPictureActivity.this,TextActivity.class);
+//                                startActivity(intent);
+//                            }
+//                        }else {
+//                            DBHelper dbHelper=new DBHelper();
+//                            if (dbHelper.findObjectByChi(text)!=null){//在数据库中存在
+//                                Intent intent=new Intent();
+//                                intent.putExtra("data",text);
+//                                intent.putExtra("modelName",dbHelper.findObjectByChi(text));
+//                                intent.setClass(SelectPictureActivity.this,ARActivity.class);
+//                                startActivity(intent);
+//                            }else {//在数据库中不存在
+//                                Intent intent=new Intent();
+//                                intent.putExtra("data",text);
+//                                intent.setClass(SelectPictureActivity.this,TextActivity.class);
+//                                startActivity(intent);
+//                            }
+//                        }
+
+//                        DBHelper dbHelper=new DBHelper();
+//                        if (dbHelper.findobject(text)!=null){//在数据库中存在
+//                            Intent intent=new Intent();
+//                            intent.putExtra("data",text);
+//                            intent.putExtra("modelName",dbHelper.findobject(text));
+//                            intent.setClass(SelectPictureActivity.this,ARActivity.class);
+//                            startActivity(intent);
+//                        }else {//在数据库中不存在
+//                            Intent intent=new Intent();
+//                            intent.putExtra("data",text);
+//                            intent.setClass(SelectPictureActivity.this,TextActivity.class);
+//                            startActivity(intent);
+//                        }
 
                     } catch (FileNotFoundException e) {
                         Log.e("Exception", e.getMessage(),e);
@@ -533,4 +708,27 @@ public class SelectPictureActivity extends AppCompatActivity {
         }
         super.onDestroy();
     }
+
+    class MyRadioButtonListener implements RadioGroup.OnCheckedChangeListener{
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            switch (checkedId){
+                case R.id.chi:
+                    setSharedPreference("language","chi_sim");
+                    System.out.println("chi");
+                    break;
+                case R.id.eng:
+                    setSharedPreference("language","eng");
+                    System.out.println("eng");
+                    break;
+            }
+        }
+    }
+
+    public void setSharedPreference(String data,String str){
+        SharedPreferences.Editor editor=getSharedPreferences("network_url",MODE_PRIVATE).edit();
+        editor.putString(data,str);
+        editor.apply();
+    }
+
 }

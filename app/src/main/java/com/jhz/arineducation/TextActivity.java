@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.view.MenuItem;
@@ -80,7 +81,17 @@ public class TextActivity extends AppCompatActivity {
             Demo即可体验到文字转中文语言。
              */
                     // setLanguage设置语言
-                    int result = tts.setLanguage(Locale.CHINA);
+                    int result;
+                    SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
+                    String language=sharedPreferences.getString("language","");
+                    if(language.indexOf("chi_sim")!=-1){
+                        result = tts.setLanguage(Locale.CHINA);
+                    }else if (language.indexOf("eng")!=-1){
+                        result = tts.setLanguage(Locale.ENGLISH);
+                    }else {
+                        result = tts.setLanguage(Locale.CHINA);
+                    }
+//                    int result = tts.setLanguage(Locale.CHINA);
                     // TextToSpeech.LANG_MISSING_DATA：表示语言的数据丢失
                     // TextToSpeech.LANG_NOT_SUPPORTED：不支持
                     if (result == TextToSpeech.LANG_MISSING_DATA
@@ -101,7 +112,13 @@ public class TextActivity extends AppCompatActivity {
             }
         });
 
-        pinyin(intent.getStringExtra("data"));
+        SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
+        String language=sharedPreferences.getString("language","");
+        if (language.indexOf("eng")!=-1){
+//            result = tts.setLanguage(Locale.ENGLISH);
+        }else {
+            pinyin(intent.getStringExtra("data"));
+        }
     }
 
     private void init(){
@@ -131,7 +148,16 @@ public class TextActivity extends AppCompatActivity {
             pinyin=pinyin+arrayList.get(i)+' ';
         }
         System.out.println(pinyin);
-        textView1.setText(pinyin);
+//        textView1.setText(pinyin);
+
+        SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
+        String language=sharedPreferences.getString("language","");
+        if(language.indexOf("chi_sim")!=-1){
+            textView1.setText(pinyin);
+        }else if (language.indexOf("eng")!=-1){
+        }else {
+            textView1.setText(pinyin);
+        }
 
 //        //输出拼音
 //        HanyuPinyinOutputFormat hanyuPinyinOutputFormat=new HanyuPinyinOutputFormat();

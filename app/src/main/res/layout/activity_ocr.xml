@@ -77,6 +77,29 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/insert_photo_sea_36x36"
             android:layout_marginTop="30dp"/>
+
+        <RadioGroup
+            android:id="@+id/group"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <RadioButton
+                android:id="@+id/chi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="中文"/>
+
+            <RadioButton
+                android:id="@+id/eng"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="英文"/>
+
+
+        </RadioGroup>
+
     </LinearLayout>
 
 <!--    <Button-->
