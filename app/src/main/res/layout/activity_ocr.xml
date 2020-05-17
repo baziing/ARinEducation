@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/background_sea"
+    android:background="@drawable/background"
     tools:context=".SelectPictureActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -36,14 +36,14 @@
                 android:text="delete"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"/>
+                android:layout_marginTop="0dp"/>
 
             <Button
                 android:id="@+id/search"
                 android:text="serach"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"/>
+                android:layout_marginTop="0dp"/>
 
         </LinearLayout>
 
@@ -69,14 +69,14 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/camera_alt_sea_36x36"
-            android:layout_marginTop="30dp"/>
+            android:layout_marginTop="15dp"/>
         <Button
             android:id="@+id/album"
             android:text="@string/ocr_album"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/insert_photo_sea_36x36"
-            android:layout_marginTop="30dp"/>
+            android:layout_marginTop="15dp"/>
 
         <RadioGroup
             android:id="@+id/group"
@@ -87,13 +87,15 @@
 
             <RadioButton
                 android:id="@+id/chi"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="中文"/>
 
             <RadioButton
                 android:id="@+id/eng"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="英文"/>
 
