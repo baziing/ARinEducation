@@ -26,7 +26,7 @@ public class CollectActivity extends AppCompatActivity {
 
         dbAdapter=new DBAdapter(this);
         dbAdapter.init();
-        strs=dbAdapter.search("Model","chi");
+        strs=dbAdapter.search("Keyword","text");
 
         toolbar=(Toolbar)findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

@@ -91,15 +91,9 @@ public class SelectPictureActivity extends AppCompatActivity {
     private RadioGroup radioGroup;
     private RadioButton chiButton;
     private RadioButton engButton;
-//    private Button backButton;
-//    private Button ocrButton;
-//    private TextView textView;//输出结果
-//    private ImageView imageView;
-//    private Button speakButton;
-
     private TextToSpeech tts;
-
     private Toolbar toolbar;
+    private Button markButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,11 +147,7 @@ public class SelectPictureActivity extends AppCompatActivity {
         radioGroup=(RadioGroup)findViewById(R.id.group);
         chiButton=(RadioButton)findViewById(R.id.chi);
         engButton=(RadioButton)findViewById(R.id.eng);
-//        backButton=(Button)findViewById(R.id.back);
-//        ocrButton=(Button)findViewById(R.id.ocr);
-//        textView=(TextView) findViewById(R.id.result);
-//        imageView=(ImageView)findViewById(R.id.img);
-//        speakButton=(Button)findViewById(R.id.speak);
+        markButton=(Button)findViewById(R.id.mark);
 
         radioGroup.setOnCheckedChangeListener(new MyRadioButtonListener());
 
@@ -229,19 +219,6 @@ public class SelectPictureActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"请输入正确的格式",Toast.LENGTH_LONG).show();
 
                 }
-//                DBHelper dbHelper=new DBHelper();
-//                if (dbHelper.findobject(text)!=null){//在数据库中存在
-//                    Intent intent=new Intent();
-//                    intent.putExtra("data",text);
-//                    intent.putExtra("modelName",dbHelper.findobject(text));
-//                    intent.setClass(SelectPictureActivity.this,ARActivity.class);
-//                    startActivity(intent);
-//                }else {//在数据库中不存在
-//                    Intent intent=new Intent();
-//                    intent.putExtra("data",text);
-//                    intent.setClass(SelectPictureActivity.this,TextActivity.class);
-//                    startActivity(intent);
-//                }
             }
         });
 
@@ -268,32 +245,15 @@ public class SelectPictureActivity extends AppCompatActivity {
             }
         });
 
-////        测试ocr
-//        ocrButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////                checkOCR();
-//                pinyin("haha");
-//            }
-//        });
-//
-////        speak
-//        speakButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                init();
-//            }
-//        });
-//
-////        返回
-//        backButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent=new Intent();
-//                intent.setClass(SelectPictureActivity.this,ARActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+        markButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent();
+                intent.setClass(SelectPictureActivity.this,CollectActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
     }
 

@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
+import java.security.Key;
 import java.util.Locale;
 
 public class ARActivity extends AppCompatActivity {
@@ -42,6 +44,8 @@ public class ARActivity extends AppCompatActivity {
     private ImageButton imageButton;
     private TextToSpeech tts;
     private Toolbar toolbar;
+    private Button button;
+    private DBAdapter dbAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,8 @@ public class ARActivity extends AppCompatActivity {
         textView=(TextView)findViewById(R.id.textView);
         textView1=(TextView)findViewById(R.id.pinyin) ;
         imageButton=(ImageButton)findViewById(R.id.replay);
+        button=(Button)findViewById(R.id.button);
+        dbAdapter=new DBAdapter(this);
 
         toolbar=(Toolbar)findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -66,6 +72,14 @@ public class ARActivity extends AppCompatActivity {
         String str=intent.getStringExtra("data");
         String modelName=intent.getStringExtra("modelName");
         modelName=modelName+".sfb";
+
+        Keyword keyword=new Keyword(str,this);
+
+        if (dbAdapter.isExisting("Keyword","text",str)){
+            button.setText("已经收藏");
+        }else {
+            button.setText("添加收藏");
+        }
 
         SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
         String language=sharedPreferences.getString("language","");
@@ -170,6 +184,19 @@ public class ARActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 tts.speak(str, TextToSpeech.QUEUE_FLUSH, null);
+            }
+        });
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (dbAdapter.isExisting("Keyword","text",str)){
+                    dbAdapter.delele(str);
+                    button.setText("添加收藏");
+                }else {
+                    dbAdapter.add(keyword);
+                    button.setText("已经收藏");
+                }
             }
         });
 

@@ -1,9 +1,29 @@
 package com.jhz.arineducation;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import java.util.Locale;
+
 public class Keyword {
 
     String text;
     int language_id;
+
+    Keyword(){}
+
+    Keyword(String text, Context context){
+        this.text=text;
+        SharedPreferences sharedPreferences=context.getSharedPreferences("network_url",Context.MODE_PRIVATE);
+        String language=sharedPreferences.getString("language","");
+        if(language.indexOf("chi_sim")!=-1){
+            this.language_id=1;
+        }else if (language.indexOf("eng")!=-1){
+            this.language_id=2;
+        }else {
+            this.language_id=1;
+        }
+    }
 
     public int getLanguage_id() {
         return language_id;

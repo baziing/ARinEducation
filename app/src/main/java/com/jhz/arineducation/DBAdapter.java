@@ -102,6 +102,17 @@ public class DBAdapter {
         return stringArrayList;
     }
 
+    public boolean isExisting(String tableName,String column,String value){
+        SQLiteDatabase db=dbOpenHelper.getWritableDatabase();
+        Cursor cursor=db.query(tableName,null,column+"=?",new String[]{value},null,null,null);
+        System.out.println(cursor.getCount());
+        System.out.println("________________________________________");
+        if (cursor.getCount()>0)
+            return true;
+        else
+            return false;
+    }
+
     private ArrayList<ModelName> toModelName(){
         ArrayList<ModelName> modelNameArrayList=new ArrayList<ModelName>();
         for (int i=0;i<data.length;i++){

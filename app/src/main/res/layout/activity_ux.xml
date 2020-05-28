@@ -50,12 +50,28 @@
           android:textSize="30dp"
           android:layout_marginTop="30dp"/>
 
-      <ImageButton
-          android:id="@+id/replay"
+      <LinearLayout
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:src="@drawable/play_circle_outline_black_24x24"
-          android:layout_marginTop="80dp"/>
+          android:layout_marginTop="80dp"
+          android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/replay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/play_circle_outline_black_24x24" />
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+      </LinearLayout>
+
+<!--      <ImageButton-->
+<!--          android:id="@+id/replay"-->
+<!--          android:layout_width="wrap_content"-->
+<!--          android:layout_height="wrap_content"-->
+<!--          android:src="@drawable/play_circle_outline_black_24x24"-->
+<!--          android:layout_marginTop="80dp"/>-->
 
     </RelativeLayout>
 
