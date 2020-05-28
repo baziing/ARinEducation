@@ -52,9 +52,14 @@ public class DeletableAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
+
+                String str=text.get(index);
+                DBAdapter dbAdapter=new DBAdapter(context);
+                dbAdapter.delele(str);
+
                 text.remove(index);
                 notifyDataSetChanged();
-                Toast.makeText(context, textView.getText().toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,"取消收藏成功".toString(), Toast.LENGTH_SHORT).show();
             }
         });
         return view;

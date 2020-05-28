@@ -39,7 +39,6 @@ public class CollectActivity extends AppCompatActivity {
         // 初始化数据结束
         adapter = new DeletableAdapter(this, strs);
         list_view.setAdapter(adapter);
-        // list_view.setSelector(R.drawable.list_select_color);
 
 
     }
