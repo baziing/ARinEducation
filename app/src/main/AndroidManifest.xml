@@ -19,16 +19,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CollectActivity"></activity>
-        <activity android:name=".TextActivity" />
-        <activity android:name=".ARActivity" />
+        <activity android:name=".Activity.CollectActivity"></activity>
+        <activity android:name=".Activity.TextActivity" />
+        <activity android:name=".Activity.ARActivity" />
 
         <meta-data
             android:name="com.google.ar.core"
             android:value="optional" />
 
-        <activity android:name=".SelectPictureActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activity.SelectPictureActivity" />
+        <activity android:name=".Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

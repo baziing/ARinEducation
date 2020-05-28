@@ -1,4 +1,4 @@
-package com.jhz.arineducation;
+package com.jhz.arineducation.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -6,6 +6,9 @@ import androidx.appcompat.widget.Toolbar;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
+
+import com.jhz.arineducation.DB.DBAdapter;
+import com.jhz.arineducation.R;
 
 import java.util.ArrayList;
 

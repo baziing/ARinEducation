@@ -1,4 +1,4 @@
-package com.jhz.arineducation;
+package com.jhz.arineducation.DB;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

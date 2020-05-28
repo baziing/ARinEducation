@@ -1,4 +1,4 @@
-package com.jhz.arineducation;
+package com.jhz.arineducation.model;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
@@ -15,7 +15,7 @@ public class Pinyin {
     char[] inputs=null;
 
 
-    Pinyin(String string){
+    public Pinyin(String string){
         setInput(string);
     }
 

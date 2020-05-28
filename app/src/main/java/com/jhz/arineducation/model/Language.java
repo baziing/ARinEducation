@@ -1,11 +1,11 @@
-package com.jhz.arineducation;
+package com.jhz.arineducation.model;
 
 public class Language {
 
     int language_id;
     String language_name;
 
-    Language(int language_id,String language_name){
+   public Language(int language_id,String language_name){
         this.language_id=language_id;
         this.language_name=language_name;
     }

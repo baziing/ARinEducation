@@ -1,4 +1,4 @@
-package com.jhz.arineducation;
+package com.jhz.arineducation.model;
 
 import org.litepal.crud.LitePalSupport;
 
@@ -9,7 +9,7 @@ public class Model extends LitePalSupport {
     private String modelName;
     private String pinyin;
 
-    Model(int type,String chi,String modelName,String pinyin,String eng){
+    public Model(int type,String chi,String modelName,String pinyin,String eng){
         this.type=type;
         this.chi=chi;
         this.eng=eng;

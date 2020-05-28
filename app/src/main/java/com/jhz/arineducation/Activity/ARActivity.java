@@ -1,4 +1,4 @@
-package com.jhz.arineducation;
+package com.jhz.arineducation.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,8 +28,11 @@ import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
+import com.jhz.arineducation.DB.DBAdapter;
+import com.jhz.arineducation.R;
+import com.jhz.arineducation.model.Keyword;
+import com.jhz.arineducation.model.Pinyin;
 
-import java.security.Key;
 import java.util.Locale;
 
 public class ARActivity extends AppCompatActivity {

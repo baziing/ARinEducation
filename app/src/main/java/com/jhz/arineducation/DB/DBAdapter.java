@@ -1,9 +1,13 @@
-package com.jhz.arineducation;
+package com.jhz.arineducation.DB;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import com.jhz.arineducation.model.Keyword;
+import com.jhz.arineducation.model.Language;
+import com.jhz.arineducation.model.ModelName;
 
 import java.util.ArrayList;
 

@@ -3,6 +3,6 @@
     <dbname value="ModelResource"/>
     <version value="1"/>
     <list>
-        <mapping class="com.jhz.arineducation.Model"/>
+        <mapping class="com.jhz.arineducation.model.Model"/>
     </list>
 </litepal>

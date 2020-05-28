@@ -1,4 +1,4 @@
-package com.jhz.arineducation;
+package com.jhz.arineducation.model;
 
 public class ModelName {
 
@@ -7,7 +7,7 @@ public class ModelName {
     String eng;
     String modelName;
 
-    ModelName(int type,String chi,String eng,String modelName){
+    public ModelName(int type,String chi,String eng,String modelName){
         this.type=type;
         this.chi=chi;
         this.eng=eng;

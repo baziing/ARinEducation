@@ -1,4 +1,6 @@
-package com.jhz.arineducation;
+package com.jhz.arineducation.DB;
+
+import com.jhz.arineducation.model.Model;
 
 import org.litepal.LitePal;
 import org.litepal.tablemanager.Connector;

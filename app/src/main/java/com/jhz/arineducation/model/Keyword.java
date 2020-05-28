@@ -1,4 +1,4 @@
-package com.jhz.arineducation;
+package com.jhz.arineducation.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,9 +10,9 @@ public class Keyword {
     String text;
     int language_id;
 
-    Keyword(){}
+    public Keyword(){}
 
-    Keyword(String text, Context context){
+    public Keyword(String text, Context context){
         this.text=text;
         SharedPreferences sharedPreferences=context.getSharedPreferences("network_url",Context.MODE_PRIVATE);
         String language=sharedPreferences.getString("language","");
