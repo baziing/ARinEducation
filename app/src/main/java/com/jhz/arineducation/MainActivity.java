@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent();
-                intent.setClass(MainActivity.this,SelectPictureActivity.class);
+                intent.setClass(MainActivity.this,CollectActivity.class);
                 startActivity(intent);
             }
         });
