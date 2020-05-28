@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -28,16 +29,11 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
+import com.jhz.arineducation.DB.DBAdapter;
 import com.jhz.arineducation.DB.DBHelper;
 import com.jhz.arineducation.R;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
-
-import net.sourceforge.pinyin4j.PinyinHelper;
-import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
-import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
-import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
-import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -79,9 +75,9 @@ public class SelectPictureActivity extends AppCompatActivity {
     private RadioGroup radioGroup;
     private RadioButton chiButton;
     private RadioButton engButton;
-    private TextToSpeech tts;
     private Toolbar toolbar;
     private Button markButton;
+    private DBAdapter dbAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,33 +94,6 @@ public class SelectPictureActivity extends AppCompatActivity {
 
         bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.test);
         // 参数Context,TextToSpeech.OnInitListener
-        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-            /*
-                使用的是小米手机进行测试，打开设置，在系统和设备列表项中找到更多设置，
-            点击进入更多设置，在点击进入语言和输入法，见语言项列表，点击文字转语音（TTS）输出，
-            首选引擎项有三项为Pico TTs，科大讯飞语音引擎3.0，度秘语音引擎3.0。其中Pico TTS不支持
-            中文语言状态。其他两项支持中文。选择科大讯飞语音引擎3.0。进行测试。
-
-                如果自己的测试机里面没有可以读取中文的引擎，
-            那么不要紧，我在该Module包中放了一个科大讯飞语音引擎3.0.apk，将该引擎进行安装后，进入到
-            系统设置中，找到文字转语音（TTS）输出，将引擎修改为科大讯飞语音引擎3.0即可。重新启动测试
-            Demo即可体验到文字转中文语言。
-             */
-                    // setLanguage设置语言
-                    int result = tts.setLanguage(Locale.CHINA);
-                    // TextToSpeech.LANG_MISSING_DATA：表示语言的数据丢失
-                    // TextToSpeech.LANG_NOT_SUPPORTED：不支持
-                    if (result == TextToSpeech.LANG_MISSING_DATA
-                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-//                        Toast.makeText(this, "数据丢失或不支持", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getApplicationContext(),"数据丢失或不支持",Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-        });
 
 //        初始化
         cameraButton=(Button)findViewById(R.id.camera);
@@ -136,6 +105,7 @@ public class SelectPictureActivity extends AppCompatActivity {
         chiButton=(RadioButton)findViewById(R.id.chi);
         engButton=(RadioButton)findViewById(R.id.eng);
         markButton=(Button)findViewById(R.id.mark);
+        dbAdapter=new DBAdapter(this);
 
         radioGroup.setOnCheckedChangeListener(new MyRadioButtonListener());
 
@@ -153,8 +123,6 @@ public class SelectPictureActivity extends AppCompatActivity {
 
         List<String> permissionList = new ArrayList<>();
 
-        init();
-
         //搜索
         textButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,41 +136,7 @@ public class SelectPictureActivity extends AppCompatActivity {
                 System.out.println(text+"+++++++++++_____________________");
                 if (!TextUtils.isEmpty(text))
                 {
-                    SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
-                    String language=sharedPreferences.getString("language","");
-                    if (language.indexOf("eng")!=-1){
-                        System.out.println("eng+++++++++++++++++++++++++++++++");
-                        DBHelper dbHelper=new DBHelper();
-                        if (dbHelper.findObjectByEng(text)!=null){//在数据库中存在
-                            Intent intent=new Intent();
-                            intent.putExtra("data",text);
-                            intent.putExtra("modelName",dbHelper.findObjectByEng(text));
-                            intent.setClass(SelectPictureActivity.this, ARActivity.class);
-//                            startActivity(intent);
-                        }else {//在数据库中不存在
-                            Intent intent=new Intent();
-                            intent.putExtra("data",text);
-                            intent.setClass(SelectPictureActivity.this,TextActivity.class);
-//                            startActivity(intent);
-                        }
-                    }else {
-                        System.out.println("chi+++++++++++++++++++++++++++++++=====");
-                        System.out.println(text+"+++++++++++++++++++++++++++++++=====");
-                        DBHelper dbHelper=new DBHelper();
-                        if (dbHelper.findObjectByChi(text)!=null){//在数据库中存在
-                            System.out.println(dbHelper.findObjectByChi(text)+"_____________");
-                            Intent intent=new Intent();
-                            intent.putExtra("data",text);
-                            intent.putExtra("modelName",dbHelper.findObjectByChi(text));
-                            intent.setClass(SelectPictureActivity.this,ARActivity.class);
-//                            startActivity(intent);
-                        }else {//在数据库中不存在
-                            Intent intent=new Intent();
-                            intent.putExtra("data",text);
-                            intent.setClass(SelectPictureActivity.this,TextActivity.class);
-//                            startActivity(intent);
-                        }
-                    }
+                    find(text);
                 }else {
                     Toast.makeText(getApplicationContext(),"请输入正确的格式",Toast.LENGTH_LONG).show();
 
@@ -262,7 +196,7 @@ public class SelectPictureActivity extends AppCompatActivity {
         autoCompleteTextView.setAdapter(adapter);
         autoCompleteTextView.setDropDownHeight(350);
         autoCompleteTextView.setThreshold(1);
-        autoCompleteTextView.setCompletionHint("最近的5条记录");
+//        autoCompleteTextView.setCompletionHint("最近的5条记录");
         autoCompleteTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -294,14 +228,6 @@ public class SelectPictureActivity extends AppCompatActivity {
         sharedPreferences.edit().clear().commit();
         initAutoComplete("history",autoCompleteTextView);
     }
-
-    private void init(){
-        // 设置音调，值越大声音越尖（女生），值越小则变成男声,1.0是常规
-        tts.setPitch(1.0f);
-        // 设置语速
-        tts.setSpeechRate(0.5f);
-    }
-
 
     private Boolean checkPicByte(Bitmap bitmap){
         if (bitmap.getAllocationByteCount()>128*100)
@@ -358,55 +284,6 @@ public class SelectPictureActivity extends AppCompatActivity {
                 .start(this);
     }
 
-    private void checkOCR(){
-        String lang = "chi_sim+eng";//中文简体+英文
-        TessBaseAPI mTess = new TessBaseAPI();
-        String path = Environment.getExternalStorageDirectory().getPath();
-//        Toast.makeText(getApplicationContext(),"/tesseract/",Toast.LENGTH_LONG).show();
-
-        SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
-        String language=sharedPreferences.getString("language","");
-        if(language.indexOf("chi_sim")!=-1){
-            mTess.init(mDataPath, "chi_sim");
-        }else if (language.indexOf("eng")!=-1){
-            mTess.init(mDataPath, "eng");
-        }else {
-            mTess.init(mDataPath, "chi_sim");
-        }
-
-        mTess.init(mDataPath, "chi_sim");//mFilePath不知道？
-
-//        mTess.setImage(bitmap);
-        Bitmap bitmap=BitmapFactory.decodeResource(this.getResources(),R.drawable.tes);
-        mTess.setImage(bitmap);
-
-        String OCRresult = mTess.getUTF8Text(); // 拿到字符串结果
-        result=OCRresult;
-//        textView.setText(OCRresult);
-//        mTess.init("/storage/self/primary/", "chi_sim");//mFilePath不知道？
-    }
-
-    private void pinyin(String string){
-        String[] pinyinArray= PinyinHelper.toHanyuPinyinStringArray('行');
-        for (int i=0;i<pinyinArray.length;++i){
-            System.out.println(pinyinArray[i]+"==============================");
-        }
-
-        //输出拼音
-        HanyuPinyinOutputFormat hanyuPinyinOutputFormat=new HanyuPinyinOutputFormat();
-        hanyuPinyinOutputFormat.setToneType(HanyuPinyinToneType.WITH_TONE_MARK);
-        hanyuPinyinOutputFormat.setVCharType(HanyuPinyinVCharType.WITH_U_UNICODE);
-        pinyinArray = null;
-        try {
-            pinyinArray = PinyinHelper.toHanyuPinyinStringArray('行', hanyuPinyinOutputFormat);
-        } catch (BadHanyuPinyinOutputFormatCombination badHanyuPinyinOutputFormatCombination) {
-            badHanyuPinyinOutputFormatCombination.printStackTrace();
-        }
-        for (int i = 0; i < pinyinArray.length; ++i) {
-            System.out.println(pinyinArray[i]+"==============================");
-        }
-    }
-
     private void checkOCR(Bitmap bitmap){
         String lang = "chi_sim+eng";//中文简体+英文
         TessBaseAPI mTess = new TessBaseAPI();
@@ -433,7 +310,6 @@ public class SelectPictureActivity extends AppCompatActivity {
         OCRresult=checkString(OCRresult);
 //        textView.setText(OCRresult);
         checkString(OCRresult);
-        tts.speak(OCRresult, TextToSpeech.QUEUE_FLUSH, null);
 //        mTess.init("/storage/self/primary/", "chi_sim");//mFilePath不知道？
         text=OCRresult;
     }
@@ -472,24 +348,12 @@ public class SelectPictureActivity extends AppCompatActivity {
         Mat resultMat=new Mat();
         Utils.bitmapToMat(bitmap,mat);
 
-//        Imgproc.cvtColor(mat,resultMat,Imgproc.COLOR_BGR2GRAY);//灰度化
-//        Imgproc.threshold(resultMat,resultMat,100,255,Imgproc.THRESH_BINARY);//二值化
-////        Mat erodeElement=Imgproc.getStructuringElement(Imgproc.MORPH_RECT,new Size(26,26));//腐蚀，填充
-////        Imgproc.erode(resultMat,resultMat,erodeElement);
-//        List<MatOfPoint>contours=new ArrayList<>();//轮廓检测
-//        Imgproc.findContours(resultMat,contours,new Mat(),Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
-//        Imgproc.drawContours(resultMat,contours,-1, new Scalar(0,255,0),4);
-
         Imgproc.cvtColor(mat, resultMat, Imgproc.COLOR_RGB2GRAY);//灰度化
         Imgproc.blur(resultMat, resultMat, new Size(3, 3));//低通滤波处理
-//        Imgproc.Canny(resultMat, resultMat, 50, 100);//边缘检测处理类
         Imgproc.threshold(resultMat, resultMat, 165, 255, Imgproc.THRESH_BINARY);//二值化
         Imgproc.medianBlur(resultMat, resultMat, 3);//中值平滑处理
         Mat element_9 = new Mat(20, 20, 0, new Scalar(1));
         Imgproc.morphologyEx(resultMat, element_9, Imgproc.MORPH_CROSS, element_9);//闭运算
-//        List<MatOfPoint>contours=new ArrayList<>();//轮廓检测
-//        Imgproc.findContours(resultMat,contours,new Mat(),Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
-//        Imgproc.drawContours(resultMat,contours,-1, new Scalar(0,255,0),1);
         
         Utils.matToBitmap(resultMat,bitmap);
         return bitmap;
@@ -568,53 +432,6 @@ public class SelectPictureActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(),"请输入正确的格式",Toast.LENGTH_LONG).show();
 
                         }
-
-//                        SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
-//                        String language=sharedPreferences.getString("language","");
-//                        if (language.indexOf("eng")!=-1){
-//                            DBHelper dbHelper=new DBHelper();
-//                            if (dbHelper.findObjectByEng(text)!=null){//在数据库中存在
-//                                Intent intent=new Intent();
-//                                intent.putExtra("data",text);
-//                                intent.putExtra("modelName",dbHelper.findObjectByEng(text));
-//                                intent.setClass(SelectPictureActivity.this,ARActivity.class);
-//                                startActivity(intent);
-//                            }else {//在数据库中不存在
-//                                Intent intent=new Intent();
-//                                intent.putExtra("data",text);
-//                                intent.setClass(SelectPictureActivity.this,TextActivity.class);
-//                                startActivity(intent);
-//                            }
-//                        }else {
-//                            DBHelper dbHelper=new DBHelper();
-//                            if (dbHelper.findObjectByChi(text)!=null){//在数据库中存在
-//                                Intent intent=new Intent();
-//                                intent.putExtra("data",text);
-//                                intent.putExtra("modelName",dbHelper.findObjectByChi(text));
-//                                intent.setClass(SelectPictureActivity.this,ARActivity.class);
-//                                startActivity(intent);
-//                            }else {//在数据库中不存在
-//                                Intent intent=new Intent();
-//                                intent.putExtra("data",text);
-//                                intent.setClass(SelectPictureActivity.this,TextActivity.class);
-//                                startActivity(intent);
-//                            }
-//                        }
-
-//                        DBHelper dbHelper=new DBHelper();
-//                        if (dbHelper.findobject(text)!=null){//在数据库中存在
-//                            Intent intent=new Intent();
-//                            intent.putExtra("data",text);
-//                            intent.putExtra("modelName",dbHelper.findobject(text));
-//                            intent.setClass(SelectPictureActivity.this,ARActivity.class);
-//                            startActivity(intent);
-//                        }else {//在数据库中不存在
-//                            Intent intent=new Intent();
-//                            intent.putExtra("data",text);
-//                            intent.setClass(SelectPictureActivity.this,TextActivity.class);
-//                            startActivity(intent);
-//                        }
-
                     } catch (FileNotFoundException e) {
                         Log.e("Exception", e.getMessage(),e);
                     }
@@ -643,17 +460,10 @@ public class SelectPictureActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        tts.stop();
-        tts.shutdown();
     }
 
     @Override
     protected void onDestroy() {
-        if (tts!=null){
-            tts.stop();
-            tts.shutdown();
-            tts=null;
-        }
         super.onDestroy();
     }
 
@@ -677,6 +487,61 @@ public class SelectPictureActivity extends AppCompatActivity {
         SharedPreferences.Editor editor=getSharedPreferences("network_url",MODE_PRIVATE).edit();
         editor.putString(data,str);
         editor.apply();
+    }
+
+    public String getLanguage(){
+        SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
+        String language=sharedPreferences.getString("language","");
+        if (language.indexOf("eng")!=-1){
+            return "eng";
+        }else
+            return "chi";
+    }
+
+    public void find(String text){
+        if ("eng".equals(getLanguage())){
+            String str=text;
+            String string = "";
+            for (int i = 0; i < str.length(); i++) {
+                char ch = str.charAt(i);
+                if (Character.isLetter(ch)) {
+                    string = string + ch;
+                }
+            }
+            str=string;
+            text=str;
+        }
+        else {
+            String str=text;
+            String reg = "[^\u4e00-\u9fa5]";
+            str = str.replaceAll(reg, "");
+            text=str;
+        }
+
+        if (TextUtils.isEmpty(text))
+            return;
+        else{
+            String str=dbAdapter.search("Model",getLanguage(),text,"model_name");
+            if (TextUtils.isEmpty(str)){
+                //不存在模型
+                putValues(str,false,text);
+            }else{
+                //存在模型
+                putValues(str,true,text);
+            }
+        }
+    }
+
+    public void putValues(String model,boolean isExisting,String text){
+        Intent intent=new Intent();
+        intent.putExtra("data",text);
+        intent.putExtra("modelName",model);
+        if (isExisting){
+            intent.setClass(SelectPictureActivity.this,ARActivity.class);
+        }else {
+            intent.setClass(SelectPictureActivity.this,TextActivity.class);
+        }
+        startActivity(intent);
     }
 
 }

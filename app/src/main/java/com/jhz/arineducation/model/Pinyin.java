@@ -1,5 +1,7 @@
 package com.jhz.arineducation.model;
 
+import android.text.TextUtils;
+
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
@@ -9,54 +11,48 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 import java.util.ArrayList;
 
 public class Pinyin {
-    String input;
-    String tone;
-    String output;
-    char[] inputs=null;
 
+    String text;
 
-    public Pinyin(String string){
-        setInput(string);
+    public Pinyin(){}
+
+    public Pinyin(String text){
+        this.text=text;
     }
 
-    public void setInput(String input) {
-        setInputs(input);
-        this.input = input;
+    public void setText(String text) {
+        this.text = text;
+    }
 
-        if (input!=null){
-            String str="  ";
-            for (int i=0;i<this.inputs.length;i++){
-                str=str+this.inputs[i]+"  ";
-            }
-            setOutput(str);
+    public boolean isChi(){
+        String str=this.text;
+        String reg = "[^\u4e00-\u9fa5]";
+        str = str.replaceAll(reg, "");
+        this.text=str;
+        if (TextUtils.isEmpty(str))
+            return false;
+        else
+            return true;
+    }
+
+
+    public String getPinyin(){
+        char[] inputs=text.toCharArray();
+        ArrayList<String> arrayList=new ArrayList<String>();
+
+        for(int i=0;i<inputs.length;i++){
+            arrayList.add(getPinyin(inputs[i]));
         }
-    }
 
-    public void setInputs(String input){
-        this.inputs=input.toCharArray();
-        setTone();
-    }
-
-    public void setTone(){
-
-        ArrayList<String>arrayList=new ArrayList<String>();
-        if (this.inputs!=null){
-            for (int i=0;i<this.inputs.length;i++){
-                arrayList.add(getTone(this.inputs[i]));
-            }
-            String pinyin="  ";
-            for (int i=0;i<arrayList.size();i++){
-                pinyin=pinyin+arrayList.get(i)+"  ";
-            }
-            this.tone=pinyin;
+        String pinyin="  ";
+        for (int i=0;i<arrayList.size();i++){
+            pinyin=pinyin+arrayList.get(i)+"  ";
         }
+
+        return pinyin;
     }
 
-    public void setOutput(String output) {
-        this.output = output;
-    }
-
-    public String getTone(char c){
+    public String getPinyin(char c){
         String[] pinyinArray= PinyinHelper.toHanyuPinyinStringArray(c);
         HanyuPinyinOutputFormat hanyuPinyinOutputFormat=new HanyuPinyinOutputFormat();
         hanyuPinyinOutputFormat.setToneType(HanyuPinyinToneType.WITH_TONE_MARK);
@@ -73,19 +69,5 @@ public class Pinyin {
         return pinyinArray[0];
     }
 
-    public String getTone() {
-        return tone;
-    }
 
-    public String getOutput() {
-        return output;
-    }
-
-    public char[] getInputs() {
-        return inputs;
-    }
-
-    public String getInput() {
-        return input;
-    }
 }

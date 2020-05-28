@@ -16,6 +16,16 @@
             android:focusable="false"
             android:layout_centerVertical="true"
             />
+
+        <ImageView android:id="@+id/simple_item_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="100dp"
+            android:focusable="false"
+            android:layout_centerVertical="true"
+            />
+
         <TextView android:id="@+id/simple_item_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

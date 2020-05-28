@@ -1,6 +1,9 @@
 package com.jhz.arineducation.Activity;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,8 +49,10 @@ public class DeletableAdapter extends BaseAdapter {
             LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view=inflater.inflate(R.layout.item, null);
         }
+
         final TextView textView=(TextView)view.findViewById(R.id.simple_item_1);
         textView.setText(text.get(position));
+
         final ImageView imageView=(ImageView)view.findViewById(R.id.simple_item_2);
         imageView.setBackgroundResource(android.R.drawable.ic_delete);
         imageView.setTag(position);
@@ -55,7 +60,6 @@ public class DeletableAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-
                 String str=text.get(index);
                 DBAdapter dbAdapter=new DBAdapter(context);
                 dbAdapter.delele(str);
@@ -65,6 +69,76 @@ public class DeletableAdapter extends BaseAdapter {
                 Toast.makeText(context,"取消收藏成功".toString(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        final ImageView imageView1=(ImageView)view.findViewById(R.id.simple_item_3);
+        imageView1.setBackgroundResource(android.R.drawable.ic_menu_search);
+        imageView1.setTag(position);
+        imageView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String str=text.get(index);
+                Toast.makeText(context,"收藏成功".toString(), Toast.LENGTH_SHORT).show();
+                find(str);
+            }
+        });
+
         return view;
     }
+
+    public String getLanguage(){
+        SharedPreferences sharedPreferences=context.getSharedPreferences("network_url",context.MODE_PRIVATE);
+        String language=sharedPreferences.getString("language","");
+        if (language.indexOf("eng")!=-1){
+            return "eng";
+        }else
+            return "chi";
+    }
+
+    public void find(String text){
+        DBAdapter dbAdapter=new DBAdapter(context);
+        if ("eng".equals(getLanguage())){
+            String str=text;
+            String string = "";
+            for (int i = 0; i < str.length(); i++) {
+                char ch = str.charAt(i);
+                if (Character.isLetter(ch)) {
+                    string = string + ch;
+                }
+            }
+            str=string;
+            text=str;
+        }
+        else {
+            String str=text;
+            String reg = "[^\u4e00-\u9fa5]";
+            str = str.replaceAll(reg, "");
+            text=str;
+        }
+
+        if (TextUtils.isEmpty(text))
+            return;
+        else{
+            String str=dbAdapter.search("Model",getLanguage(),text,"model_name");
+            if (TextUtils.isEmpty(str)){
+                //不存在模型
+                putValues(str,false,text);
+            }else{
+                //存在模型
+                putValues(str,true,text);
+            }
+        }
+    }
+
+    public void putValues(String model,boolean isExisting,String text){
+        Intent intent=new Intent();
+        intent.putExtra("data",text);
+        intent.putExtra("modelName",model);
+        if (isExisting){
+            intent.setClass(context,ARActivity.class);
+        }else {
+            intent.setClass(context,TextActivity.class);
+        }
+        context.startActivity(intent);
+    }
+
 }

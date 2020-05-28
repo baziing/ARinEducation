@@ -106,6 +106,24 @@ public class DBAdapter {
         return stringArrayList;
     }
 
+    public String search(String tableName,String language,String keyword,String column){
+        ArrayList<String>stringArrayList=new ArrayList<String>();
+        SQLiteDatabase db=dbOpenHelper.getWritableDatabase();
+        Cursor cursor=db.query(tableName,null,language+" like ?",new String[]{"%"+keyword+"%"},null,null,null);
+        System.out.println(cursor.getCount());
+        if (cursor.moveToFirst()){
+            do {
+                String text=cursor.getString(cursor.getColumnIndex(column));
+                stringArrayList.add(text);
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        if (cursor.getCount()>0){
+            return stringArrayList.get(0);
+        }else
+            return null;
+    }
+
     public boolean isExisting(String tableName,String column,String value){
         SQLiteDatabase db=dbOpenHelper.getWritableDatabase();
         Cursor cursor=db.query(tableName,null,column+"=?",new String[]{value},null,null,null);
