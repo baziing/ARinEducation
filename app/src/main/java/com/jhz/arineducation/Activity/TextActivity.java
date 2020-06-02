@@ -39,7 +39,7 @@ public class TextActivity extends AppCompatActivity {
         imageButton=(ImageButton)findViewById(R.id.replay);
         TTS=new TTS(this);
         pinyin=new Pinyin();
-        button=(ImageButton)findViewById(R.id.button);
+        button=(ImageButton)findViewById(R.id.mark);
         dbAdapter=new DBAdapter(this);
 
         toolbar=(Toolbar)findViewById(R.id.toolbar);
@@ -82,7 +82,7 @@ public class TextActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dbAdapter.isExisting("Keyword","text",str)){
+                if (dbAdapter.isExisting("Keyword","mark",str)){
                     dbAdapter.delele(str);
 //                    button.setText("添加收藏");
                     button.setImageResource(R.drawable.bookmark_border_black_36x36);

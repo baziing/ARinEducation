@@ -6,10 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -32,6 +35,7 @@ import com.googlecode.tesseract.android.TessBaseAPI;
 import com.jhz.arineducation.DB.DBAdapter;
 import com.jhz.arineducation.DB.DBHelper;
 import com.jhz.arineducation.R;
+import com.jhz.arineducation.model.CDia;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -46,7 +50,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -155,7 +161,23 @@ public class SelectPictureActivity extends AppCompatActivity {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                takePic();
+                int n=0;
+                do {
+                    n=n+1;
+                    if (checkData()){
+                        takePic();
+                        return;
+                    }else {
+                        if (onBackPressed1("是否重新下载数据包？")){
+                            copyData();
+                        }else
+                            return;
+                    }
+                }while (n<3);
+
+                if (n>=3){
+                    onBackPressed1("请手动下载");
+                }
             }
         });
 
@@ -163,6 +185,23 @@ public class SelectPictureActivity extends AppCompatActivity {
         albumButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int n=0;
+                do {
+                    n=n+1;
+                    if (checkData()){
+                        selectPic();
+                        return;
+                    }else {
+                        if (onBackPressed1("是否重新下载数据包？")){
+                            copyData();
+                        }else
+                            return;
+                    }
+                }while (n<3);
+
+                if (n>=3){
+                    onBackPressed1("请手动下载");
+                }
                 selectPic();
             }
         });
@@ -542,6 +581,96 @@ public class SelectPictureActivity extends AppCompatActivity {
             intent.setClass(SelectPictureActivity.this,TextActivity.class);
         }
         startActivity(intent);
+    }
+
+
+    public boolean onBackPressed1(String string) {
+        CDia cDia=new CDia();
+        new AlertDialog.Builder(this).setTitle(string)
+                .setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        cDia.setData(false);
+                    }
+                })
+                .setNegativeButton("返回", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        cDia.setData(true);
+                    }
+                }).show();
+
+        return cDia.isData();
+    }
+
+    private boolean checkData(){
+        String path=Environment.getExternalStorageDirectory().getAbsolutePath()+"/ARinEducation/tessdata/";
+        String[] datas=new String[]{"eng.traineddata","chi_sim.traineddata"};
+        for (int i=0;i<datas.length;i++){
+            File file=new File(path+datas[i]);
+            if (!file.exists()){
+                System.out.println("不存在"+datas[i]);
+                return false;
+            }else {
+                System.out.println(datas[i]+"已经存在");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void copyData(){
+        String path=Environment.getExternalStorageDirectory().getAbsolutePath()+"/ARinEducation/tessdata/";
+        String[] datas=new String[]{"eng.traineddata","chi_sim.traineddata"};
+        for (int i=0;i<datas.length;i++){
+            File file=new File(path+datas[i]);
+            if (!file.exists()){
+                System.out.println("不存在"+datas[i]);
+                copy(datas[i]);
+            }else {
+                System.out.println(datas[i]+"已经存在");
+            }
+        }
+    }
+
+    private void copy(String dataName){
+        Toast.makeText(this, "1dsafa", Toast.LENGTH_LONG).show();
+        System.out.println("==============从a");
+
+        try {
+            System.out.println("==============从asset复制文件到内存==============copyAssets============================.");
+            String newPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/ARinEducation/tessdata/";
+            File files = new File(newPath);
+            String fileName=dataName;
+            File file = new File(newPath, fileName);
+
+            InputStream is = null;
+
+            try {
+                AssetManager manager = getAssets();
+                if (manager == null) return;
+                is = manager.open(dataName);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            if (is == null) return;
+            FileOutputStream fos = new FileOutputStream(file);
+            byte[] buffer = new byte[1024];
+            int byteCount = 0;
+            while ((byteCount = is.read(buffer)) != -1) {// 循环从输入流读取
+                // buffer字节
+                fos.write(buffer, 0, byteCount);// 将读取的输入流写入到输出流
+            }
+            fos.flush();// 刷新缓冲区
+            is.close();
+            fos.close();
+            System.out.println("==============从asset复制文件到内存==============copyAssets  success============================.");
+        }catch (Exception e){
+            System.out.println("==============从asset复制文件到内存==============copyAssets  error============================.");
+            e.printStackTrace();
+        }
+
     }
 
 }
