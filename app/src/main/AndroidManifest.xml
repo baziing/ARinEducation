@@ -22,7 +22,8 @@
         <activity android:name=".Activity.CollectActivity"></activity>
         <activity android:name=".Activity.TextActivity" />
         <activity android:name=".Activity.ARActivity" />
-
+        <activity android:name=".Activity.TextMarkActivity" />
+        <activity android:name=".Activity.ARMarkActivity" />
         <meta-data
             android:name="com.google.ar.core"
             android:value="optional" />

@@ -1,22 +1,19 @@
 package com.jhz.arineducation.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.ar.core.Anchor;
 import com.google.ar.core.ArCoreApk;
@@ -34,7 +31,7 @@ import com.jhz.arineducation.model.Keyword;
 import com.jhz.arineducation.model.Pinyin;
 import com.jhz.arineducation.model.TTS;
 
-public class ARActivity extends AppCompatActivity {
+public class ARMarkActivity extends AppCompatActivity {
 
     private ArFragment arFragment;
     private ModelRenderable andyRenderable;
@@ -74,7 +71,7 @@ public class ARActivity extends AppCompatActivity {
         Intent intent=getIntent();
         String str=intent.getStringExtra("data");
         String modelName=intent.getStringExtra("modelName");
-        int language=intent.getIntExtra("language",-1);
+        int language=intent.getIntExtra("language",1);
         modelName=modelName+".sfb";
         TTS.setText(str);
         pinyin.setText(str);
@@ -132,11 +129,7 @@ public class ARActivity extends AppCompatActivity {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (language==-1){
-                    TTS.setLanguage();
-                }else {
-                    TTS.setLanguage(language);
-                }
+                TTS.setLanguage(language);
                 if (!TTS.isEmpty()){
                     TTS.speak();
                 }

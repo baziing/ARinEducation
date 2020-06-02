@@ -1,9 +1,5 @@
 package com.jhz.arineducation.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -11,13 +7,17 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.jhz.arineducation.DB.DBAdapter;
 import com.jhz.arineducation.R;
 import com.jhz.arineducation.model.Keyword;
 import com.jhz.arineducation.model.Pinyin;
 import com.jhz.arineducation.model.TTS;
 
-public class TextActivity extends AppCompatActivity {
+public class TextMarkActivity extends AppCompatActivity {
 
     private TextView textView;
     private TextView textView1;
@@ -53,7 +53,7 @@ public class TextActivity extends AppCompatActivity {
         Intent intent=getIntent();
         textView.setText(intent.getStringExtra("data"));
         String str=intent.getStringExtra("data");
-        int language=intent.getIntExtra("language",-1);
+        int language=intent.getIntExtra("language",1);
         TTS.setText(str);
         pinyin.setText(str);
 
@@ -73,11 +73,7 @@ public class TextActivity extends AppCompatActivity {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (language==-1){
-                    TTS.setLanguage();
-                }else {
-                    TTS.setLanguage(language);
-                }
+                TTS.setLanguage(language);
                 if (!TTS.isEmpty()){
                     TTS.speak();
                 }

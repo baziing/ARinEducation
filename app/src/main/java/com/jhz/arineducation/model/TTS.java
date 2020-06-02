@@ -13,6 +13,7 @@ public class TTS {
     private Context context;
     private String text;
     private TextToSpeech tts;
+    private int language;
 
     public TTS(Context context){
         this.context=context;
@@ -47,10 +48,13 @@ public class TTS {
 
         if(language.indexOf("chi_sim")!=-1){
             tts.setLanguage(Locale.CHINA);
+            this.language=1;
         }else if (language.indexOf("eng")!=-1){
             tts.setLanguage(Locale.ENGLISH);
+            this.language=2;
         }else {
             tts.setLanguage(Locale.CHINA);
+            this.language=1;
         }
     }
 
@@ -58,19 +62,21 @@ public class TTS {
         switch (language){
             case 1:
                 tts.setLanguage(Locale.CHINA);
+                this.language=language;
                 break;
             case 2:
                 tts.setLanguage(Locale.ENGLISH);
+                this.language=language;
                 break;
             default:break;
         }
     }
 
     public boolean isEmpty(){
-        SharedPreferences sharedPreferences=context.getSharedPreferences("network_url",Context.MODE_PRIVATE);
-        String language=sharedPreferences.getString("language","");
+//        SharedPreferences sharedPreferences=context.getSharedPreferences("network_url",Context.MODE_PRIVATE);
+//        String language=sharedPreferences.getString("language","");
 
-        if (language.indexOf("eng")!=-1){
+        if (language==2){
             String str=text;
             String string = "";
             if (str.equals("")) {

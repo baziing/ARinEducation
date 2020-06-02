@@ -124,6 +124,24 @@ public class DBAdapter {
             return null;
     }
 
+    public int search(String tableName,String keyword,String column){
+        ArrayList<Integer>intArrayList=new ArrayList<Integer>();
+        SQLiteDatabase db=dbOpenHelper.getWritableDatabase();
+        Cursor cursor=db.query(tableName,null,"text=?",new String[]{keyword},null,null,null);
+        System.out.println(cursor.getCount());
+        if (cursor.moveToFirst()){
+            do {
+                Integer text=cursor.getInt(cursor.getColumnIndex(column));
+                intArrayList.add(text);
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        if (cursor.getCount()>0){
+            return intArrayList.get(0);
+        }else
+            return 3;
+    }
+
     public boolean isExisting(String tableName,String column,String value){
         SQLiteDatabase db=dbOpenHelper.getWritableDatabase();
         Cursor cursor=db.query(tableName,null,column+"=?",new String[]{value},null,null,null);

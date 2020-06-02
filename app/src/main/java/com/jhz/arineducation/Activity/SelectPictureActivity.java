@@ -356,6 +356,7 @@ public class SelectPictureActivity extends AppCompatActivity {
     private String checkString(String str){
         SharedPreferences sharedPreferences=getSharedPreferences("network_url",MODE_PRIVATE);
         String language=sharedPreferences.getString("language","");
+        System.out.println(language);
         if (language.indexOf("eng")!=-1){
             String string = "";
             if (str.equals("")) {
@@ -363,8 +364,10 @@ public class SelectPictureActivity extends AppCompatActivity {
             }
             for (int i = 0; i < str.length(); i++) {
                 char ch = str.charAt(i);
-                if (Character.isLetter(ch)) {
+                System.out.println(ch+"++++++++++++++++");
+                if (Character.isLetter(ch) && !isChinese(ch)) {
                     string = string + ch;
+                    System.out.println(string+"++++++++++++++++");
                 }
             }
             str=string;
@@ -377,6 +380,11 @@ public class SelectPictureActivity extends AppCompatActivity {
 //        str = str.replaceAll(reg, "");
 //        System.out.println(str);
         return str;
+    }
+
+    public static boolean isChinese(char a) {
+        int v = (int) a;
+        return (v >= 19968 && v <= 171941);
     }
 
     //处理图片
@@ -444,11 +452,13 @@ public class SelectPictureActivity extends AppCompatActivity {
                                     Intent intent=new Intent();
                                     intent.putExtra("data",text);
                                     intent.putExtra("modelName",dbHelper.findObjectByEng(text));
+                                    intent.putExtra("language",-1);
                                     intent.setClass(SelectPictureActivity.this,ARActivity.class);
                                     startActivity(intent);
                                 }else {//在数据库中不存在
                                     Intent intent=new Intent();
                                     intent.putExtra("data",text);
+                                    intent.putExtra("language",-1);
                                     intent.setClass(SelectPictureActivity.this,TextActivity.class);
                                     startActivity(intent);
                                 }
@@ -458,11 +468,13 @@ public class SelectPictureActivity extends AppCompatActivity {
                                     Intent intent=new Intent();
                                     intent.putExtra("data",text);
                                     intent.putExtra("modelName",dbHelper.findObjectByChi(text));
+                                    intent.putExtra("language",-1);
                                     intent.setClass(SelectPictureActivity.this,ARActivity.class);
                                     startActivity(intent);
                                 }else {//在数据库中不存在
                                     Intent intent=new Intent();
                                     intent.putExtra("data",text);
+                                    intent.putExtra("language",-1);
                                     intent.setClass(SelectPictureActivity.this,TextActivity.class);
                                     startActivity(intent);
                                 }
@@ -575,6 +587,7 @@ public class SelectPictureActivity extends AppCompatActivity {
         Intent intent=new Intent();
         intent.putExtra("data",text);
         intent.putExtra("modelName",model);
+        intent.putExtra("language",-1);
         if (isExisting){
             intent.setClass(SelectPictureActivity.this,ARActivity.class);
         }else {

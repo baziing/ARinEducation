@@ -21,6 +21,7 @@ public class DeletableAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<String> text;
+    private int language=1;
     public DeletableAdapter(Context context,ArrayList<String> text){
         this.context = context;
         this.text=text;
@@ -77,7 +78,6 @@ public class DeletableAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 String str=text.get(index);
-                Toast.makeText(context,"收藏成功".toString(), Toast.LENGTH_SHORT).show();
                 find(str);
             }
         });
@@ -89,14 +89,43 @@ public class DeletableAdapter extends BaseAdapter {
         SharedPreferences sharedPreferences=context.getSharedPreferences("network_url",context.MODE_PRIVATE);
         String language=sharedPreferences.getString("language","");
         if (language.indexOf("eng")!=-1){
-            return "eng";
-        }else
+            {
+                this.language=2;
+                return "eng";
+            }
+        }else{
+            this.language=1;
             return "chi";
+        }
+    }
+
+    public String getLanguage(String str){
+        DBAdapter dbAdapter=new DBAdapter(context);
+        switch (dbAdapter.search("Keyword",str,"language_id")){
+            case 1:
+                this.language=1;
+                return "chi";
+            case 2:
+                this.language=2;
+                return "eng";
+                default:
+        }
+        SharedPreferences sharedPreferences=context.getSharedPreferences("network_url",context.MODE_PRIVATE);
+        String language=sharedPreferences.getString("language","");
+        if (language.indexOf("eng")!=-1){
+            {
+                this.language=2;
+                return "eng";
+            }
+        }else{
+            this.language=1;
+            return "chi";
+        }
     }
 
     public void find(String text){
         DBAdapter dbAdapter=new DBAdapter(context);
-        if ("eng".equals(getLanguage())){
+        if ("eng".equals(getLanguage(text))){
             String str=text;
             String string = "";
             for (int i = 0; i < str.length(); i++) {
@@ -118,21 +147,22 @@ public class DeletableAdapter extends BaseAdapter {
         if (TextUtils.isEmpty(text))
             return;
         else{
-            String str=dbAdapter.search("Model",getLanguage(),text,"model_name");
+            String str=dbAdapter.search("Model",getLanguage(text),text,"model_name");
             if (TextUtils.isEmpty(str)){
                 //不存在模型
-                putValues(str,false,text);
+                putValues(str,false,text,language);
             }else{
                 //存在模型
-                putValues(str,true,text);
+                putValues(str,true,text,language);
             }
         }
     }
 
-    public void putValues(String model,boolean isExisting,String text){
+    public void putValues(String model,boolean isExisting,String text,int language){
         Intent intent=new Intent();
         intent.putExtra("data",text);
         intent.putExtra("modelName",model);
+        intent.putExtra("language",language);
         if (isExisting){
             intent.setClass(context,ARActivity.class);
         }else {
