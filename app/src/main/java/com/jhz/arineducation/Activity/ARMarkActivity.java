@@ -49,7 +49,7 @@ public class ARMarkActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_ux);
+        setContentView(R.layout.activity_ux1);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
 
         textView=(TextView)findViewById(R.id.textView);

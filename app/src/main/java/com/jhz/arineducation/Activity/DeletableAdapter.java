@@ -164,7 +164,7 @@ public class DeletableAdapter extends BaseAdapter {
         intent.putExtra("modelName",model);
         intent.putExtra("language",language);
         if (isExisting){
-            intent.setClass(context,ARActivity.class);
+            intent.setClass(context,VideoRecordingActivity.class);
         }else {
             intent.setClass(context,TextActivity.class);
         }

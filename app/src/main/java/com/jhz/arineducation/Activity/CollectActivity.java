@@ -27,8 +27,6 @@ public class CollectActivity extends AppCompatActivity {
 
         ListView list_view = (ListView) findViewById(R.id.list_view);
 
-        dbAdapter=new DBAdapter(this);
-        dbAdapter.init();
         strs=dbAdapter.search("Keyword","text");
 
         toolbar=(Toolbar)findViewById(R.id.toolbar);

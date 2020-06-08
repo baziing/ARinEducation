@@ -6,8 +6,11 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +38,13 @@ import com.jhz.arineducation.model.Keyword;
 import com.jhz.arineducation.model.Pinyin;
 import com.jhz.arineducation.model.TTS;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class ARActivity extends AppCompatActivity {
 
     private ArFragment arFragment;
@@ -47,12 +58,15 @@ public class ARActivity extends AppCompatActivity {
     private DBAdapter dbAdapter;
     private TTS TTS;
     private Pinyin pinyin;
+    private ImageButton snapButton;
+    private LinearLayout linearLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_ux);
+        setContentView(R.layout.activity_ux1);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
 
         textView=(TextView)findViewById(R.id.textView);
@@ -62,6 +76,9 @@ public class ARActivity extends AppCompatActivity {
         dbAdapter=new DBAdapter(this);
         TTS=new TTS(this);
         pinyin=new Pinyin();
+        snapButton=(ImageButton)findViewById(R.id.snap);
+        linearLayout=(LinearLayout)findViewById(R.id.view);
+        textView.setDrawingCacheEnabled(true);
 
         toolbar=(Toolbar)findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -158,7 +175,17 @@ public class ARActivity extends AppCompatActivity {
             }
         });
 
+        snapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewSnapshot(linearLayout);
+
+            }
+        });
+
     }
+
+
 
     @Override
     protected void onResume() {
@@ -188,6 +215,109 @@ public class ARActivity extends AppCompatActivity {
                     .show();
             return;
         }
+    }
+
+    public Bitmap getBitmapFromView(View view){
+        Bitmap bitmap = null;
+        try {
+            bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            view.draw(canvas);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+    private void viewSnapshot(View view){
+//        view.setDrawingCacheEnabled(true);
+////        获取缓存的 Bitmap
+//        Bitmap drawingCache = view.getDrawingCache();
+////        复制获取的 Bitmap
+//        drawingCache = Bitmap.createBitmap(drawingCache);
+////        关闭视图的缓存
+//        view.setDrawingCacheEnabled(false);
+
+//        Bitmap drawingCache = getBitmapFromView(view);
+//        if (drawingCache != null) {
+//            saveBitmap(drawingCache);
+//            Toast.makeText(this, "成功", Toast.LENGTH_SHORT).show();
+//        } else {
+//            Toast.makeText(this, "失败", Toast.LENGTH_SHORT).show();
+//        }
+
+        View dView = getWindow().getDecorView();
+        dView.setDrawingCacheEnabled(true);
+        dView.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(dView.getDrawingCache());
+        if (bitmap != null) {
+//            img_screen.setImageBitmap(bitmap);
+            try {
+                // 获取内置SD卡路径
+                String sdCardPath = Environment.getExternalStorageDirectory().getPath();
+                // 图片文件路径
+                String filePath = sdCardPath + File.separator + "screenshot.png";
+                File file = new File(filePath);
+                FileOutputStream os = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+                os.flush();
+                os.close();
+
+                //发广播告诉相册有图片需要更新，这样可以在图册下看到保存的图片了
+                Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri uri = Uri.fromFile(file);
+                intent.setData(uri);
+                sendBroadcast(intent);
+
+                Toast.makeText(this,"存储完成"+filePath+"sdCardPath"+sdCardPath,Toast.LENGTH_LONG);
+            } catch (Exception e) {
+            }
+        }
+
+    }
+
+    private int saveBitmap(Bitmap bitmap){
+
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            Toast.makeText(this, "保存失败,没有读写sd卡权限", Toast.LENGTH_SHORT).show();
+        }
+
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+        String dirName = "ARinEducation";
+        File appDir = new File(path , dirName);
+        if (!appDir.exists()) {
+            appDir.mkdirs();
+        }
+        //文件名为时间
+        long timeStamp = System.currentTimeMillis();
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String sd = sdf.format(new Date(timeStamp));
+        String fileName = sd + ".png";
+        //获取文件
+        File file = new File(appDir, fileName);
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            //通知系统相册刷新
+            ARActivity.this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                    Uri.fromFile(new File(file.getPath()))));
+            return 2;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (fos != null) {
+                    fos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return -1;
     }
 
     @Override

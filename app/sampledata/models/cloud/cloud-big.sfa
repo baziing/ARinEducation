@@ -56,7 +56,7 @@
     file: 'sampledata/models/cloud/cloud-big.fbx',
     name: 'cloud-big',
     recenter: 'root',
-    scale: 0.27963100000000002,
+    scale: 0.17963100000000002,
   },
   samplers: [
     {

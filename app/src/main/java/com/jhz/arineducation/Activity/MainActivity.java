@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.jhz.arineducation.DB.DBAdapter;
 import com.jhz.arineducation.DB.DBHelper;
 import com.jhz.arineducation.R;
 
@@ -36,7 +37,9 @@ public class MainActivity extends AppCompatActivity {
 
     //    权限
     String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.INTERNET,Manifest.permission.CAMERA};
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.CAMERA};
     List<String> permissionList = new ArrayList<>();
 
     private Button button;
@@ -88,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
 //        Connector.getDatabase();
         DBHelper dbHelper=new DBHelper();
         dbHelper.initialize();
+
+        DBAdapter dbAdapter=new DBAdapter(this);
+        dbAdapter.init();
 
         //判断是否有文件夹
         checkDir("ARinEducation");

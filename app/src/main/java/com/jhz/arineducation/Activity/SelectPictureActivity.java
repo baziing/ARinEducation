@@ -1,14 +1,6 @@
 package com.jhz.arineducation.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.FileProvider;
-
-import android.app.AlertDialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.speech.tts.TextToSpeech;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -30,6 +21,13 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 import com.jhz.arineducation.DB.DBAdapter;
@@ -55,7 +53,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class SelectPictureActivity extends AppCompatActivity {
 
@@ -210,7 +207,7 @@ public class SelectPictureActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent();
-                intent.setClass(SelectPictureActivity.this,CollectActivity.class);
+                intent.setClass(SelectPictureActivity.this, CollectActivity.class);
                 startActivity(intent);
             }
         });
@@ -453,7 +450,7 @@ public class SelectPictureActivity extends AppCompatActivity {
                                     intent.putExtra("data",text);
                                     intent.putExtra("modelName",dbHelper.findObjectByEng(text));
                                     intent.putExtra("language",-1);
-                                    intent.setClass(SelectPictureActivity.this,ARActivity.class);
+                                    intent.setClass(SelectPictureActivity.this,VideoRecordingActivity.class);
                                     startActivity(intent);
                                 }else {//在数据库中不存在
                                     Intent intent=new Intent();
@@ -469,7 +466,7 @@ public class SelectPictureActivity extends AppCompatActivity {
                                     intent.putExtra("data",text);
                                     intent.putExtra("modelName",dbHelper.findObjectByChi(text));
                                     intent.putExtra("language",-1);
-                                    intent.setClass(SelectPictureActivity.this,ARActivity.class);
+                                    intent.setClass(SelectPictureActivity.this,VideoRecordingActivity.class);
                                     startActivity(intent);
                                 }else {//在数据库中不存在
                                     Intent intent=new Intent();
@@ -589,7 +586,7 @@ public class SelectPictureActivity extends AppCompatActivity {
         intent.putExtra("modelName",model);
         intent.putExtra("language",-1);
         if (isExisting){
-            intent.setClass(SelectPictureActivity.this,ARActivity.class);
+            intent.setClass(SelectPictureActivity.this,VideoRecordingActivity.class);
         }else {
             intent.setClass(SelectPictureActivity.this,TextActivity.class);
         }
